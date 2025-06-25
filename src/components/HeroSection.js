@@ -3,7 +3,6 @@ import { Link } from "gatsby"
 
 const pageStyle = {
   background: '#fafdff',
-  minHeight: '100vh',
   fontFamily: 'var(--font-sans)',
 }
 
@@ -166,10 +165,14 @@ const btnAltHover = {
 
 const heroSection = {
   ...pageStyle,
-  minHeight: 'calc(100vh - 60px)', // 从80px减少到60px
-  padding: '0', // 移除顶部内边距
+  height: 'calc(100vh - 60px)',
+  padding: '0',
   display: 'block',
-  marginTop: '60px', // 从80px减少到60px
+  marginTop: '0',
+  marginLeft: 'calc(-1 * var(--size-gutter))',
+  marginRight: 'calc(-1 * var(--size-gutter))',
+  marginBottom: 'calc(-1 * var(--size-gutter))',
+  paddingTop: 'calc(var(--size-gutter) + 60px)',
 }
 
 function handleBtnMouseOver(e) {
