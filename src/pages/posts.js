@@ -236,111 +236,82 @@ const PostsPage = () => {
         {/* 搜索和筛选区域 */}
         <div style={{ 
           marginBottom: '2rem',
-          padding: '1.5rem',
-          background: '#f8f9fa',
-          borderRadius: '12px',
-          border: '1px solid #e9ecef'
+          padding: '1.5rem 0',
         }}>
-          <div style={{ 
-            display: 'flex', 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
             gap: '2rem',
-            alignItems: 'stretch'
+            marginBottom: '1rem',
           }}>
-            {/* 左侧：标签筛选 */}
-            <div style={{ flex: '1' }}>
-              <h3 style={{ 
-                fontSize: '1.1rem', 
-                fontWeight: '600', 
-                marginBottom: '1rem',
-                color: '#333',
-                marginTop: '0'
-              }}>
-                Filter by tags:
-              </h3>
-              <div style={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: '0.5rem' 
-              }}>
-                {allTags.map(tag => (
-                  <button
-                    key={tag}
-                    onClick={() => toggleTag(tag)}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                      border: '2px solid',
-                      borderRadius: '20px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      backgroundColor: selectedTags.includes(tag) ? '#76cfc5' : 'transparent',
-                      borderColor: selectedTags.includes(tag) ? '#76cfc5' : '#ddd',
-                      color: selectedTags.includes(tag) ? 'white' : '#666'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!selectedTags.includes(tag)) {
-                        e.target.style.borderColor = '#76cfc5'
-                        e.target.style.color = '#76cfc5'
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!selectedTags.includes(tag)) {
-                        e.target.style.borderColor = '#ddd'
-                        e.target.style.color = '#666'
-                      }
-                    }}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 右侧：搜索框和统计 */}
-            <div style={{ 
-              width: '300px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between'
+            <h3 style={{ 
+              fontSize: '1.1rem', 
+              fontWeight: '600', 
+              color: '#333',
+              margin: 0,
+              whiteSpace: 'nowrap'
             }}>
-              <div>
-                <input
-                  type="text"
-                  placeholder="Search posts..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem 1rem',
-                    fontSize: '1rem',
-                    border: '2px solid #e9ecef',
-                    borderRadius: '8px',
-                    outline: 'none',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#76cfc5'}
-                  onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
-                />
-              </div>
-              
-              {/* 筛选结果统计 */}
-              <div style={{ 
-                padding: '0.75rem', 
-                background: 'white', 
-                borderRadius: '6px',
-                fontSize: '0.9rem',
-                color: '#666',
-                textAlign: 'center'
-              }}>
-                {filteredPosts.length} of {postsData.length} posts
-                {selectedTags.length > 0 && (
-                  <div style={{ fontSize: '0.8rem', marginTop: '0.25rem', color: '#888' }}>
-                    Filtered by: {selectedTags.join(', ')}
-                  </div>
-                )}
-              </div>
+              Filter by tags:
+            </h3>
+            <div style={{ flex: 1 }} />
+            <div style={{ width: '300px' }}>
+              <input
+                type="text"
+                placeholder="Search posts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  fontSize: '1rem',
+                  border: '2px solid #e9ecef',
+                  borderRadius: '8px',
+                  outline: 'none',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#76cfc5'}
+                onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
+              />
             </div>
+          </div>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+            width: '100%'
+          }}>
+            {allTags.map(tag => (
+              <button
+                key={tag}
+                onClick={() => toggleTag(tag)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                  border: '2px solid',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  backgroundColor: selectedTags.includes(tag) ? '#76cfc5' : 'transparent',
+                  borderColor: selectedTags.includes(tag) ? '#76cfc5' : '#ddd',
+                  color: selectedTags.includes(tag) ? 'white' : '#666'
+                }}
+                onMouseEnter={(e) => {
+                  if (!selectedTags.includes(tag)) {
+                    e.target.style.borderColor = '#76cfc5'
+                    e.target.style.color = '#76cfc5'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!selectedTags.includes(tag)) {
+                    e.target.style.borderColor = '#ddd'
+                    e.target.style.color = '#666'
+                  }
+                }}
+              >
+                {tag}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -376,11 +347,7 @@ const PostsPage = () => {
                 <div style={{
                   display: 'table',
                   width: '100%',
-                  borderCollapse: 'collapse',
-                  background: 'linear-gradient(120deg, #f8fafc 0%, #e6f7f4 100%)',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(118,207,197,0.04)',
-                  padding: '0.5rem 0',
+                  borderCollapse: 'collapse'
                 }}>
                   {posts.map((post, index) => {
                     const isExpanded = expandedPosts.has(post.id);
@@ -400,22 +367,35 @@ const PostsPage = () => {
                             <div style={{
                               display: 'flex',
                               alignItems: 'center',
-                              gap: '0.5rem'
+                              gap: 0,
+                              justifyContent: 'center',
+                              minWidth: 0
                             }}>
-                              <WillowDecoration isLeft={false} />
+                              <div style={{ width: '40px', display: 'flex', justifyContent: 'flex-end', marginRight: '0.5rem' }}>
+                                <WillowDecoration isLeft={false} />
+                              </div>
                               <h3 style={{
                                 fontSize: '1.6rem',
                                 fontWeight: '600',
                                 margin: '0',
                                 color: '#333',
-                                flex: '1'
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                flex: 1,
+                                minWidth: 0
                               }}>
                                 <a 
                                   href={post.slug} 
                                   style={{
                                     color: 'inherit',
                                     textDecoration: 'none',
-                                    transition: 'color 0.2s'
+                                    transition: 'color 0.2s',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: 'inline-block',
+                                    maxWidth: '100%'
                                   }}
                                   onMouseEnter={(e) => e.target.style.color = '#76cfc5'}
                                   onMouseLeave={(e) => e.target.style.color = '#333'}
@@ -423,7 +403,9 @@ const PostsPage = () => {
                                   {post.title}
                                 </a>
                               </h3>
-                              <WillowDecoration isLeft={true} />
+                              <div style={{ width: '40px', display: 'flex', justifyContent: 'flex-start', marginLeft: '0.5rem' }}>
+                                <WillowDecoration isLeft={true} />
+                              </div>
                             </div>
                           </div>
                           {/* 标签列 */}
