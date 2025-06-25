@@ -91,6 +91,7 @@ const PostsPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState([])
   const [expandedPosts, setExpandedPosts] = useState(new Set())
+  const [hoveredRow, setHoveredRow] = useState(null)
 
   // 获取所有唯一的标签
   const allTags = useMemo(() => {
@@ -186,7 +187,7 @@ const PostsPage = () => {
   )
 
   return (
-    <Layout>
+  <Layout>
       <Seo 
         title="Blog Posts" 
         description="Explore our collection of articles on web development, design, and technology."
@@ -344,87 +345,91 @@ const PostsPage = () => {
                   marginBottom: '2rem',
                   letterSpacing: '0.02em',
                 }}>{formatDate(date)}</div>
-                <div style={{
-                  display: 'table',
-                  width: '100%',
-                  borderCollapse: 'collapse'
-                }}>
+                <div style={{ width: '100%' }}>
                   {posts.map((post, index) => {
                     const isExpanded = expandedPosts.has(post.id);
                     return (
                       <React.Fragment key={post.id}>
                         <div style={{
-                          display: 'table-row',
-                          transition: 'all 0.3s ease',
-                          cursor: 'pointer'
+                          display: 'flex',
+                          alignItems: 'stretch',
+                          /* borderBottom: index === posts.length - 1 ? 'none' : '1px solid #f0f0f0', */
+                          transition: 'all 0.3s',
+                          cursor: 'pointer',
+                          background: isExpanded ? 'rgba(118,207,197,0.06)' : 'none',
+                          borderRadius: isExpanded ? '12px 12px 0 0' : 0,
                         }}>
                           {/* 标题列（带柳条装饰） */}
                           <div style={{
-                            display: 'table-cell',
+                            flex: 2,
+                            display: 'flex',
+                            alignItems: 'center',
+                            minWidth: 0,
                             padding: '1.5rem 1rem',
-                            verticalAlign: 'top'
                           }}>
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 0,
-                              justifyContent: 'center',
+                            <div style={{ width: '40px', display: 'flex', justifyContent: 'flex-end', marginRight: '0.5rem', cursor: 'default' }}>
+                              <WillowDecoration isLeft={false} />
+                            </div>
+                            <h3 style={{
+                              fontSize: '1.6rem',
+                              fontWeight: '600',
+                              margin: '0',
+                              color: '#333',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              flex: 1,
                               minWidth: 0
                             }}>
-                              <div style={{ width: '40px', display: 'flex', justifyContent: 'flex-end', marginRight: '0.5rem' }}>
-                                <WillowDecoration isLeft={false} />
-                              </div>
-                              <h3 style={{
-                                fontSize: '1.6rem',
-                                fontWeight: '600',
-                                margin: '0',
-                                color: '#333',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                flex: 1,
-                                minWidth: 0
-                              }}>
-                                <a 
-                                  href={post.slug} 
-                                  style={{
-                                    color: 'inherit',
-                                    textDecoration: 'none',
-                                    transition: 'color 0.2s',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    display: 'inline-block',
-                                    maxWidth: '100%'
-                                  }}
-                                  onMouseEnter={(e) => e.target.style.color = '#76cfc5'}
-                                  onMouseLeave={(e) => e.target.style.color = '#333'}
-                                >
-                                  {post.title}
-                                </a>
-                              </h3>
-                              <div style={{ width: '40px', display: 'flex', justifyContent: 'flex-start', marginLeft: '0.5rem' }}>
-                                <WillowDecoration isLeft={true} />
-                              </div>
+                              <a 
+                                href={post.slug} 
+                                style={{
+                                  color: 'inherit',
+                                  textDecoration: 'none',
+                                  transition: 'color 0.2s, transform 0.2s cubic-bezier(0.4,0,0.2,1)',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  display: 'inline-block',
+                                  maxWidth: '100%'
+                                }}
+                                onMouseEnter={e => {
+                                  e.target.style.color = '#76cfc5';
+                                  e.target.style.transform = 'translateY(-4px)';
+                                }}
+                                onMouseLeave={e => {
+                                  e.target.style.color = '#333';
+                                  e.target.style.transform = 'none';
+                                }}
+                              >
+                                {post.title}
+                              </a>
+                            </h3>
+                            <div style={{ width: '40px', display: 'flex', justifyContent: 'flex-start', marginLeft: '0.5rem', cursor: 'default' }}>
+                              <WillowDecoration isLeft={true} />
                             </div>
                           </div>
                           {/* 标签列 */}
                           <div style={{
-                            display: 'table-cell',
+                            flex: 1.2,
+                            display: 'flex',
+                            alignItems: 'center',
                             padding: '1.5rem 1rem',
-                            verticalAlign: 'top',
-                            width: 'auto',
-                            minWidth: '150px'
+                            minWidth: '150px',
+                            flexWrap: 'wrap',
+                            rowGap: '0.3rem',
                           }}>
                             {post.tags && post.tags.length > 0 && (
                               <div style={{
                                 display: 'flex',
                                 flexDirection: 'row',
                                 gap: '0.3rem',
-                                flexWrap: 'wrap'
+                                flexWrap: 'nowrap',
+                                width: '100%',
+                                overflow: 'hidden',
                               }}>
-                                {post.tags.map(tag => (
-                                  <span key={tag} style={{
+                                {post.tags.slice(0, 2).map((tag, i) => (
+                                  <span key={tag + i} style={{
                                     background: '#edf2f7',
                                     color: '#4a5568',
                                     padding: '0.25rem 0.75rem',
@@ -441,13 +446,14 @@ const PostsPage = () => {
                           </div>
                           {/* 展开按钮列 */}
                           <div style={{
-                            display: 'table-cell',
+                            flex: '0 0 80px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             padding: '1.5rem 1rem',
-                            verticalAlign: 'top',
-                            width: '80px'
                           }}>
                             <button
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.stopPropagation();
                                 toggleExpanded(post.id);
                               }}
@@ -457,96 +463,135 @@ const PostsPage = () => {
                                 cursor: 'pointer',
                                 fontSize: '1.2rem',
                                 color: '#666',
-                                transition: 'all 0.3s ease',
-                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
+                                transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                outline: 'none',
+                              }}
+                              onMouseEnter={e => {
+                                e.currentTarget.style.color = '#76cfc5';
+                                e.currentTarget.style.transform = (isExpanded ? 'rotate(180deg)' : 'rotate(0deg)') + ' scale(1.25)';
+                                e.currentTarget.style.boxShadow = '0 2px 12px rgba(118,207,197,0.18)';
+                              }}
+                              onMouseLeave={e => {
+                                e.currentTarget.style.color = '#666';
+                                e.currentTarget.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+                                e.currentTarget.style.boxShadow = 'none';
                               }}
                             >
-                              <span style={{ fontSize: '1.2rem' }}>↓</span>
+                              <span style={{ fontSize: '1.2rem', display: 'inline-block', transition: 'inherit' }}>↓</span>
                             </button>
                           </div>
                         </div>
-                        {/* 展开的详细内容 */}
-                        {isExpanded && (
-                          <div style={{
-                            display: 'table-row',
-                            background: '#f8f9fa',
-                            borderBottom: '1px solid #e9ecef'
-                          }}>
-                            <div style={{
-                              display: 'table-cell',
-                              padding: '0 1rem 2rem 1rem',
-                              verticalAlign: 'top'
-                            }} colSpan="3">
-                              <div style={{
-                                display: 'flex',
-                                gap: '2rem',
-                                alignItems: 'flex-start',
-                                padding: '2rem',
-                                background: 'white',
-                                borderRadius: '12px',
-                                boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
-                              }}>
-                                {/* 文章封面图 */}
-                                <div style={{
-                                  width: '200px',
-                                  height: '150px',
-                                  background: 'linear-gradient(135deg, #76cfc5 0%, #5bc0ae 100%)',
-                                  borderRadius: '8px',
-                                  display: 'flex',
+                        {/* 展开内容 */}
+                        <div
+                          style={{
+                            maxHeight: isExpanded ? '320px' : '0',
+                            overflow: 'hidden',
+                            transition: 'max-height 0.5s cubic-bezier(0.4,0,0.2,1)',
+                            background: 'none',
+                            borderRadius: 0,
+                            margin: isExpanded ? '0.5rem 0 1.5rem 0' : '0',
+                            boxShadow: 'none',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            padding: isExpanded ? '2rem 0 2rem 0' : '0 0 0 0',
+                            gap: '2rem',
+                            pointerEvents: isExpanded ? 'auto' : 'none',
+                          }}
+                        >
+                          {/* 左侧：描述、时长、按钮 */}
+                          <div style={{ flex: 2, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingLeft: '3rem' }}>
+                            <div style={{ fontSize: '1.1rem', color: '#333', marginBottom: '1rem', lineHeight: 1.7 }}>{post.excerpt}</div>
+                            {/* Read more + 箭头同步hover */}
+                            <div
+                              style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', marginBottom: 0 }}
+                              onMouseEnter={e => setHoveredRow(post.id)}
+                              onMouseLeave={e => setHoveredRow(null)}
+                            >
+                              <a 
+                                href={post.slug}
+                                style={{
+                                  display: 'inline-flex',
                                   alignItems: 'center',
-                                  justifyContent: 'center',
-                                  color: 'white',
-                                  fontSize: '3rem',
-                                  fontWeight: 'bold'
-                                }}>
-                                  📄
-                                </div>
-                                {/* 文章介绍内容 */}
-                                <div style={{ flex: '1' }}>
-                                  <h4 style={{
-                                    fontSize: '1.3rem',
-                                    fontWeight: '600',
-                                    margin: '0 0 1rem 0',
-                                    color: '#333'
-                                  }}>
-                                    Article Preview
-                                  </h4>
-                                  <p style={{
-                                    fontSize: '1rem',
-                                    lineHeight: '1.6',
-                                    color: '#555',
-                                    margin: '0 0 1rem 0'
-                                  }}>
-                                    {post.excerpt}
-                                  </p>
-                                  <a 
-                                    href={post.slug}
-                                    style={{
-                                      display: 'inline-block',
-                                      padding: '0.75rem 1.5rem',
-                                      background: '#76cfc5',
-                                      color: 'white',
-                                      textDecoration: 'none',
-                                      borderRadius: '8px',
-                                      fontWeight: '600',
-                                      transition: 'all 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                      e.target.style.background = '#5bc0ae';
-                                      e.target.style.transform = 'translateY(-1px)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      e.target.style.background = '#76cfc5';
-                                      e.target.style.transform = 'translateY(0)';
-                                    }}
-                                  >
-                                    Read Full Article →
-                                  </a>
-                                </div>
-                              </div>
+                                  gap: '0.5rem',
+                                  color: hoveredRow === post.id ? '#5bc0ae' : '#76cfc5',
+                                  textDecoration: 'none',
+                                  fontSize: '1.15rem',
+                                  fontWeight: 600,
+                                  transition: 'color 0.3s, transform 0.3s',
+                                  padding: '0.7rem 0',
+                                  cursor: 'pointer',
+                                  border: 'none',
+                                  background: 'none',
+                                  transform: hoveredRow === post.id ? 'translateX(10px)' : 'none',
+                                }}
+                              >
+                                Read more <span style={{ fontSize: '1.2rem' }}>→</span>
+                              </a>
+                              <span style={{ fontSize: '0.95rem', color: '#888', margin: 0, whiteSpace: 'nowrap' }}>⏱️ {post.readTime}</span>
+                              {/* 箭头同步hover */}
+                              <button
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  toggleExpanded(post.id);
+                                }}
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  fontSize: '1.2rem',
+                                  color: hoveredRow === post.id ? '#76cfc5' : '#666',
+                                  transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+                                  transform: (isExpanded ? 'rotate(180deg)' : 'rotate(0deg)') + (hoveredRow === post.id ? ' scale(1.25)' : ''),
+                                  outline: 'none',
+                                  boxShadow: hoveredRow === post.id ? '0 2px 12px rgba(118,207,197,0.18)' : 'none',
+                                }}
+                              >
+                                <span style={{ fontSize: '1.2rem', display: 'inline-block', transition: 'inherit' }}>↓</span>
+                              </button>
                             </div>
                           </div>
-                        )}
+                          {/* 右侧：封面图 */}
+                          <div style={{
+                            flex: 1.2,
+                            minWidth: '180px',
+                            maxWidth: '330px',
+                            height: '200px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                            {(() => {
+                              const svgs = [
+                                // 蓝色
+                                <svg key="blue" width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <rect width="180" height="200" rx="16" fill="#4299e1"/>
+                                  <rect x="30" y="60" width="80" height="30" rx="8" fill="#fff"/>
+                                  <circle cx="50" cy="75" r="6" fill="#4299e1"/>
+                                  <circle cx="70" cy="75" r="6" fill="#4299e1"/>
+                                  <rect x="30" y="110" width="40" height="16" rx="8" fill="#fff"/>
+                                </svg>,
+                                // 绿色
+                                <svg key="green" width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <rect width="180" height="200" rx="16" fill="#38b2ac"/>
+                                  <rect x="30" y="50" width="90" height="20" rx="10" fill="#fff"/>
+                                  <rect x="30" y="80" width="70" height="20" rx="10" fill="#fff"/>
+                                  <circle cx="120" cy="60" r="7" fill="#38b2ac"/>
+                                  <circle cx="100" cy="90" r="7" fill="#38b2ac"/>
+                                </svg>,
+                                // 橙色
+                                <svg key="orange" width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <rect width="180" height="200" rx="16" fill="#ed8936"/>
+                                  <rect x="40" y="40" width="70" height="40" rx="8" fill="#fff"/>
+                                  <rect x="50" y="55" width="50" height="8" rx="4" fill="#ed8936"/>
+                                  <circle cx="60" cy="120" r="12" fill="#fff"/>
+                                  <circle cx="100" cy="120" r="12" fill="#fff"/>
+                                </svg>
+                              ];
+                              return svgs[index % svgs.length];
+                            })()}
+                          </div>
+                        </div>
                       </React.Fragment>
                     );
                   })}
@@ -556,8 +601,8 @@ const PostsPage = () => {
           )}
         </div>
       </div>
-    </Layout>
-  )
+  </Layout>
+)
 }
 
 export default PostsPage 
