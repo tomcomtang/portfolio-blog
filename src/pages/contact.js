@@ -36,7 +36,7 @@ const ContactPage = () => {
       <style dangerouslySetInnerHTML={{
         __html: `
           body {
-            background: linear-gradient(120deg, #f8fafc 0%, #e6f7f4 100%) !important;
+            background: linear-gradient(120deg, #fffaf5 0%, #fff5f0 50%, #fff0eb 100%) !important;
             min-height: 100vh;
           }
           :root {
@@ -62,7 +62,7 @@ const ContactPage = () => {
               padding: 0 1rem !important;
             }
             .contact-title {
-              font-size: 2.5rem !important;
+              font-size: 2rem !important;
             }
             .contact-subtitle {
               font-size: 1.1rem !important;
@@ -75,9 +75,9 @@ const ContactPage = () => {
         {/* 页面标题 */}
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <h1 className="contact-title" style={{ 
-            fontSize: '3rem', 
+            fontSize: '2.5rem', 
             fontWeight: '800', 
-            marginBottom: '1.5rem',
+            marginBottom: '1rem',
             background: 'linear-gradient(90deg, #76cfc5 0%, #ffb400 100%)',
             WebkitBackgroundClip: 'text',
             backgroundClip: 'text',
@@ -86,7 +86,7 @@ const ContactPage = () => {
             Get In Touch
           </h1>
           <p className="contact-subtitle" style={{ 
-            fontSize: '1.3rem', 
+            fontSize: '1.2rem', 
             color: '#666', 
             margin: '0 auto',
             maxWidth: '600px',
