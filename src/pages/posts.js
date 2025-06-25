@@ -382,7 +382,7 @@ const PostsPage = () => {
                               minWidth: 0
                             }}>
                               <a 
-                                href={post.slug} 
+                                href={`/post/${post.slug}`}
                                 style={{
                                   color: 'inherit',
                                   textDecoration: 'none',
@@ -399,7 +399,7 @@ const PostsPage = () => {
                                 }}
                                 onMouseLeave={e => {
                                   e.target.style.color = '#333';
-                                  e.target.style.transform = 'none';
+                                  e.target.style.transform = 'translateY(0)';
                                 }}
                               >
                                 {post.title}
@@ -509,7 +509,7 @@ const PostsPage = () => {
                               onMouseLeave={e => setHoveredRow(null)}
                             >
                               <a 
-                                href={post.slug}
+                                href={`/post/${post.slug}`}
                                 style={{
                                   display: 'inline-flex',
                                   alignItems: 'center',
