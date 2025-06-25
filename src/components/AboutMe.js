@@ -432,6 +432,8 @@ const AboutMe = () => {
     ...cardStyle,
     opacity: cardVisible ? 1 : 0,
     transition: 'opacity 1.5s ease-in-out',
+    border: '2px solid transparent',
+    background: 'linear-gradient(#fff, #fff) padding-box, linear-gradient(45deg, #dddddd, #eeeeee, #dddddd) border-box',
   }
 
   return (
