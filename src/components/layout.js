@@ -71,9 +71,19 @@ const Layout = ({ children }) => {
             style={{ 
               color: '#000', 
               textDecoration: 'none',
-              fontWeight: 600,
               borderBottom: '1px solid #000',
               paddingBottom: '1px',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.color = '#76cfc5';
+              e.target.style.borderBottomColor = '#76cfc5';
+              e.target.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.color = '#000';
+              e.target.style.borderBottomColor = '#000';
+              e.target.style.transform = 'translateY(0)';
             }}
             target="_blank"
             rel="noopener noreferrer"
