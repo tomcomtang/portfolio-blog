@@ -15,6 +15,10 @@
   --radius-sm: 12px;
   --gsc-btn-bg: linear-gradient(90deg, #76cfc5 0%, #ffb400 100%);
   --gsc-btn-color: #fff;
+  --gsc-btn-min-width: 140px;
+  --gsc-card-radius: 16px;
+  --gsc-card-padding: 1.5rem;
+  --gsc-card-margin: 1.2rem 0;
 }
 
 [data-theme='dark'] {
@@ -30,17 +34,52 @@
   --gsc-btn-color: #fff;
 }
 
-.gsc-main, .gsc-comment, .gsc-header, .gsc-comment-box {
-  background: var(--color-bg) !important;
-  border-radius: var(--radius) !important;
-  border: 1px solid var(--color-border) !important;
-  box-shadow: var(--color-shadow) !important;
+/* 让主区域背景透明，去掉多余卡片感 */
+.gsc-main, .gsc-header, .gsc-comments {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
-.gsc-comment-content {
-  color: var(--color-text) !important;
-  font-size: 1rem !important;
-  line-height: 1.7 !important;
+/* 只保留每条评论的卡片感，并增加间距和内边距 */
+.gsc-comment {
+  background: var(--color-bg) !important;
+  border-radius: var(--gsc-card-radius) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--color-shadow) !important;
+  margin: var(--gsc-card-margin) !important;
+  padding: var(--gsc-card-padding) !important;
+}
+
+/* 评论输入区美化，增加内边距和圆角 */
+.gsc-comment-box {
+  background: var(--color-bg-alt) !important;
+  border-radius: var(--gsc-card-radius) !important;
+  border: 1px solid var(--color-border) !important;
+  margin-bottom: 2rem !important;
+  padding: var(--gsc-card-padding) !important;
+}
+
+/* 让按钮宽度统一 */
+.gsc-comment-box button, .gsc-header-button, .gsc-comment-actions button {
+  min-width: var(--gsc-btn-min-width) !important;
+  text-align: center !important;
+}
+
+/* 评论内容和输入框增加内边距 */
+.gsc-comment-content, .gsc-comment-box textarea {
+  padding: 0.5rem 0 !important;
+}
+
+/* 让评论输入框和评论列表之间有间距 */
+.gsc-comment-box {
+  margin-bottom: 2rem !important;
+}
+
+/* 让评论列表和边框有间距 */
+.gsc-comments {
+  padding-bottom: 1rem !important;
 }
 
 .gsc-comment-author {
