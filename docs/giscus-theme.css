@@ -32,11 +32,13 @@
   --gsc-btn-color: #fff;
 }
 
-/* 只自定义按钮，不动主结构 */
+/* 按钮样式，确保 sign out 按钮高度一致 */
 .gsc-comment-box button,
 .gsc-header-button,
 .gsc-comment-actions button,
-.gsc-header-actions button {
+.gsc-header-actions button,
+.gsc-header-actions > button,
+.gsc-header-actions > span > button {
   min-width: var(--gsc-btn-min-width) !important;
   height: var(--gsc-btn-height) !important;
   text-align: center !important;
@@ -53,11 +55,15 @@
   vertical-align: middle !important;
   line-height: 1 !important;
   padding: 0 1.5rem !important;
+  box-sizing: border-box !important;
 }
+
 .gsc-comment-box button:hover,
 .gsc-header-button:hover,
 .gsc-comment-actions button:hover,
-.gsc-header-actions button:hover {
+.gsc-header-actions button:hover,
+.gsc-header-actions > button:hover,
+.gsc-header-actions > span > button:hover {
   filter: brightness(1.1);
   transform: translateY(-2px);
 }
