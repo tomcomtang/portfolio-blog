@@ -27,7 +27,7 @@ const ContactPage = () => {
   }
 
   return (
-    <Layout>
+  <Layout>
       <Seo 
         title="Contact Me" 
         description="Get in touch with me for collaborations, questions, or just to say hello."
@@ -581,8 +581,8 @@ const ContactPage = () => {
           </p>
         </div>
       </div>
-    </Layout>
-  )
+  </Layout>
+)
 }
 
 export default ContactPage 

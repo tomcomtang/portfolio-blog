@@ -286,7 +286,7 @@ const CommentsPage = () => {
               reactionsEnabled="1"
               emitMetadata="0"
               inputPosition="top"
-              theme="preferred_color_scheme"
+              theme="https://tomcomtang.github.io/portfolio-blog/giscus-theme.css"
               lang="en"
               loading="lazy"
             />
