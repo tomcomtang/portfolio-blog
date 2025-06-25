@@ -34,6 +34,7 @@ const Layout = ({ children }) => {
           margin: `0 auto`,
           maxWidth: `var(--size-content)`,
           padding: `var(--size-gutter)`,
+          paddingTop: `calc(var(--size-gutter) + 60px)`,
         }}
       >
         <AnimatePresence mode="wait">

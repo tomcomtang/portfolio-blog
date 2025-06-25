@@ -5,7 +5,16 @@ const navStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  padding: '1.5rem 2rem',
+  padding: '1rem 2rem',
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  zIndex: 1000,
+  background: 'rgba(250, 253, 255, 0.95)',
+  backdropFilter: 'blur(10px)',
+  boxShadow: '0 2px 20px rgba(0,0,0,0.08)',
+  borderBottom: '1px solid rgba(118,207,197,0.1)',
 }
 const menuStyle = {
   display: 'flex',
@@ -13,6 +22,8 @@ const menuStyle = {
   listStyle: 'none',
   margin: 0,
   padding: 0,
+  alignItems: 'center',
+  height: '100%',
 }
 const siteNameStyle = {
   fontWeight: 700,
@@ -20,14 +31,20 @@ const siteNameStyle = {
   letterSpacing: '0.05em',
   color: '#ec6664',
   textDecoration: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  height: '100%',
 }
 const menuLinkStyle = {
   fontWeight: 700,
   color: '#d48a88',
   textDecoration: 'none',
-  fontSize: '1rem',
+  fontSize: '1.1rem',
   transition: 'color 0.2s, transform 0.2s',
-  display: 'inline-block',
+  display: 'flex',
+  alignItems: 'center',
+  height: '100%',
+  padding: '0.25rem 0',
 }
 const activeMenuLinkStyle = {
   ...menuLinkStyle,
@@ -40,19 +57,19 @@ const Header = ({ siteTitle }) => (
       {siteTitle || 'My Portfolio Blog'}
     </Link>
     <ul style={menuStyle}>
-      <li>
+      <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
         <Link to="/" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
         >Home</Link>
       </li>
-      <li>
+      <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
         <Link to="/posts" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
         >Posts</Link>
       </li>
-      <li>
+      <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
         <Link to="/contact" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
