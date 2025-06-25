@@ -52,11 +52,34 @@ const Layout = ({ children }) => {
           style={{
             marginTop: `var(--space-5)`,
             fontSize: `var(--font-sm)`,
+            padding: '0.5rem 0',
+            color: '#000',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          © {new Date().getFullYear()} &middot; Built with
-          {` `}
-          <a href="https://www.gatsbyjs.com">Gatsby</a>
+          <div>
+            © 2025 Your Name. All rights reserved. •{' '}
+            <a href="/privacy" style={{ color: '#000', textDecoration: 'none' }}>Privacy</a>
+            {' '}• Built with{' '}
+            <a href="https://www.gatsbyjs.com" style={{ color: '#000' }}>Gatsby</a> +{' '}
+            <a href="https://wordpress.org" style={{ color: '#000' }}>Wordpress</a>
+          </div>
+          <a 
+            href="https://github.com/tomcomtang/portfolio-blog" 
+            style={{ 
+              color: '#000', 
+              textDecoration: 'none',
+              fontWeight: 600,
+              borderBottom: '1px solid #000',
+              paddingBottom: '1px',
+            }}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Star this project on Github
+          </a>
         </footer>
       </div>
     </>
