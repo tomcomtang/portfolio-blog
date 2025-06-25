@@ -70,6 +70,12 @@ const Header = ({ siteTitle }) => (
         >Posts</Link>
       </li>
       <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
+        <Link to="/comments" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
+          onMouseOver={handleMouseOver}
+          onMouseOut={handleMouseOut}
+        >Comments</Link>
+      </li>
+      <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
         <Link to="/contact" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
