@@ -182,63 +182,40 @@ const CommentsPage = () => {
       }} />
       
       <div className="comments-page-container">
-        {/* Header */}
-        <div style={{
-          background: 'white',
-          borderRadius: '20px',
-          padding: '3rem',
-          marginBottom: '3rem',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-          border: '1px solid #e9ecef',
-          textAlign: 'center'
-        }}>
-          <h1 style={{
-            fontSize: '3rem',
-            fontWeight: '800',
+        {/* 页面标题 */}
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <h1 className="comments-title" style={{ 
+            fontSize: '2.5rem', 
+            fontWeight: '800', 
             marginBottom: '1rem',
             background: 'linear-gradient(90deg, #76cfc5 0%, #ffb400 100%)',
             WebkitBackgroundClip: 'text',
             backgroundClip: 'text',
-            color: 'transparent',
-            lineHeight: 1.2
+            color: 'transparent'
           }}>
-            💬 Comments & Discussion
+            Comments & Discussion
           </h1>
-          <p style={{
-            fontSize: '1.3rem',
+          <ul style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '0.5rem 1.5rem',
+            listStyle: 'none',
+            padding: 0,
+            margin: '0 auto',
+            maxWidth: '700px',
+            textAlign: 'left',
+            justifyContent: 'center',
+            fontSize: '1.1rem',
             color: '#666',
-            marginBottom: '2rem',
-            lineHeight: 1.6
+            lineHeight: 1.7
           }}>
-            Welcome! Share your thoughts, questions, or suggestions here.
-          </p>
-          <div style={{
-            padding: '1.5rem',
-            background: 'linear-gradient(135deg, #f8fafc 0%, #e6f7f4 100%)',
-            borderRadius: '12px',
-            border: '1px solid #e9ecef'
-          }}>
-            <p style={{
-              fontSize: '1.1rem',
-              color: '#555',
-              margin: 0,
-              lineHeight: 1.6
-            }}>
-              This is an open space for discussion. You can:
-            </p>
-            <ul style={{
-              textAlign: 'left',
-              maxWidth: '600px',
-              margin: '1rem auto 0',
-              paddingLeft: '2rem'
-            }}>
-              <li style={{ marginBottom: '0.5rem', color: '#555' }}>Share your thoughts and feedback on articles</li>
-              <li style={{ marginBottom: '0.5rem', color: '#555' }}>Ask technical questions or seek help</li>
-              <li style={{ marginBottom: '0.5rem', color: '#555' }}>Discuss tech trends and best practices</li>
-              <li style={{ marginBottom: '0.5rem', color: '#555' }}>Share your project experience</li>
-              <li style={{ marginBottom: '0.5rem', color: '#555' }}>Suggest improvements for this site</li>
-            </ul>
-          </div>
+            <li style={{ whiteSpace: 'nowrap' }}>• Be respectful and constructive in your comments</li>
+            <li style={{ whiteSpace: 'nowrap' }}>• No spam, self-promotion, or advertising allowed</li>
+            <li style={{ whiteSpace: 'nowrap' }}>• No personal attacks, hate speech, or harassment</li>
+            <li style={{ whiteSpace: 'nowrap' }}>• Stay on topic and keep discussions relevant</li>
+            <li style={{ whiteSpace: 'nowrap' }}>• No inappropriate, offensive, or illegal content</li>
+            <li style={{ whiteSpace: 'nowrap' }}>• Use clear, friendly, and inclusive language</li>
+          </ul>
         </div>
 
         {/* Comments Area */}
@@ -286,7 +263,8 @@ const CommentsPage = () => {
               reactionsEnabled="1"
               emitMetadata="0"
               inputPosition="top"
-              theme="https://tomcomtang.github.io/portfolio-blog/giscus-theme.css"
+              // theme="https://tomcomtang.github.io/portfolio-blog/giscus-theme.css"
+              theme="noborder_light"
               lang="en"
               loading="lazy"
             />
