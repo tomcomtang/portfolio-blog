@@ -17,9 +17,6 @@
   --gsc-btn-color: #fff;
   --gsc-btn-min-width: 140px;
   --gsc-btn-height: 40px;
-  --gsc-card-radius: 16px;
-  --gsc-card-padding: 1.5rem;
-  --gsc-card-margin: 1.2rem 0;
 }
 
 [data-theme='dark'] {
@@ -35,41 +32,7 @@
   --gsc-btn-color: #fff;
 }
 
-/* 只去掉多余阴影和边框，保留内容区的 padding */
-.gsc-main, .gsc-header {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* 评论列表区域保留默认 padding，避免内容贴边 */
-.gsc-comments {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 1rem 0 !important;
-}
-
-/* 评论卡片 */
-.gsc-comment {
-  background: var(--color-bg) !important;
-  border-radius: var(--gsc-card-radius) !important;
-  border: 1px solid var(--color-border) !important;
-  box-shadow: var(--color-shadow) !important;
-  margin: var(--gsc-card-margin) !important;
-  padding: var(--gsc-card-padding) !important;
-}
-
-/* 评论输入区 */
-.gsc-comment-box {
-  background: var(--color-bg-alt) !important;
-  border-radius: var(--gsc-card-radius) !important;
-  border: 1px solid var(--color-border) !important;
-  margin-bottom: 2rem !important;
-  padding: var(--gsc-card-padding) !important;
-}
-
-/* 让所有按钮宽高统一，包括 sign out */
+/* 只自定义按钮，不动主结构 */
 .gsc-comment-box button,
 .gsc-header-button,
 .gsc-comment-actions button,
@@ -97,6 +60,33 @@
 .gsc-header-actions button:hover {
   filter: brightness(1.1);
   transform: translateY(-2px);
+}
+
+/* 评论列表区域保留默认 padding，避免内容贴边 */
+.gsc-comments {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 1rem 0 !important;
+}
+
+/* 评论卡片 */
+.gsc-comment {
+  background: var(--color-bg) !important;
+  border-radius: var(--gsc-card-radius) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--color-shadow) !important;
+  margin: var(--gsc-card-margin) !important;
+  padding: var(--gsc-card-padding) !important;
+}
+
+/* 评论输入区 */
+.gsc-comment-box {
+  background: var(--color-bg-alt) !important;
+  border-radius: var(--gsc-card-radius) !important;
+  border: 1px solid var(--color-border) !important;
+  margin-bottom: 2rem !important;
+  padding: var(--gsc-card-padding) !important;
 }
 
 /* 评论内容和输入框增加内边距 */
