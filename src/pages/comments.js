@@ -16,7 +16,7 @@ const CommentsPage = () => {
       <style dangerouslySetInnerHTML={{
         __html: `
           body {
-            background: linear-gradient(120deg, #f8fafc 0%, #e6f7f4 100%) !important;
+            background: linear-gradient(120deg, #f8fafc 0%, #f5f7fa 100%) !important;
             min-height: 100vh;
           }
           :root {
@@ -188,13 +188,30 @@ const CommentsPage = () => {
             fontSize: '2.5rem', 
             fontWeight: '800', 
             marginBottom: '1rem',
-            background: 'linear-gradient(90deg, #76cfc5 0%, #ffb400 100%)',
+            background: 'linear-gradient(90deg, #76cfc5 0%, #b4b8f8 100%)',
             WebkitBackgroundClip: 'text',
             backgroundClip: 'text',
             color: 'transparent'
           }}>
             Comments & Discussion
           </h1>
+          <p style={{ 
+            fontSize: '1.2rem', 
+            color: '#666', 
+            margin: '0 auto',
+            maxWidth: '600px',
+            lineHeight: 1.6
+          }}>
+            Share your thoughts, questions, or suggestions here. Let's connect and discuss!
+          </p>
+          {/* 彩色分割线 */}
+          <div style={{
+            height: '6px',
+            width: '120px',
+            margin: '1.5rem auto 2rem',
+            borderRadius: '3px',
+            background: 'linear-gradient(90deg, #76cfc5 0%, #b4b8f8 100%)'
+          }} />
           <ul style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
@@ -209,12 +226,120 @@ const CommentsPage = () => {
             color: '#666',
             lineHeight: 1.7
           }}>
-            <li style={{ whiteSpace: 'nowrap' }}>• Be respectful and constructive in your comments</li>
-            <li style={{ whiteSpace: 'nowrap' }}>• No spam, self-promotion, or advertising allowed</li>
-            <li style={{ whiteSpace: 'nowrap' }}>• No personal attacks, hate speech, or harassment</li>
-            <li style={{ whiteSpace: 'nowrap' }}>• Stay on topic and keep discussions relevant</li>
-            <li style={{ whiteSpace: 'nowrap' }}>• No inappropriate, offensive, or illegal content</li>
-            <li style={{ whiteSpace: 'nowrap' }}>• Use clear, friendly, and inclusive language</li>
+            <li style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+              {/* 圆形底+白色小圆点 */}
+              <span style={{
+                display: 'inline-block',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: '#76cfc5',
+                marginRight: '0.7em',
+                verticalAlign: 'middle',
+                flexShrink: 0,
+                position: 'relative'
+              }}>
+                <svg width="18" height="18" viewBox="0 0 18 18" style={{ position: 'absolute', top: 0, left: 0 }}>
+                  <circle cx="9" cy="9" r="3.2" fill="#fff" />
+                </svg>
+              </span>
+              Be respectful and constructive in your comments
+            </li>
+            <li style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+              {/* 圆形底+白色方块 */}
+              <span style={{
+                display: 'inline-block',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: '#ffb400',
+                marginRight: '0.7em',
+                verticalAlign: 'middle',
+                flexShrink: 0,
+                position: 'relative'
+              }}>
+                <svg width="18" height="18" viewBox="0 0 18 18" style={{ position: 'absolute', top: 0, left: 0 }}>
+                  <rect x="5.2" y="5.2" width="7.6" height="7.6" rx="2" fill="#fff" />
+                </svg>
+              </span>
+              No spam, self-promotion, or advertising allowed
+            </li>
+            <li style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+              {/* 圆形底+白色三角 */}
+              <span style={{
+                display: 'inline-block',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: '#ec6664',
+                marginRight: '0.7em',
+                verticalAlign: 'middle',
+                flexShrink: 0,
+                position: 'relative'
+              }}>
+                <svg width="18" height="18" viewBox="0 0 18 18" style={{ position: 'absolute', top: 0, left: 0 }}>
+                  <polygon points="9,5.2 12.8,12.8 5.2,12.8" fill="#fff" />
+                </svg>
+              </span>
+              No personal attacks, hate speech, or harassment
+            </li>
+            <li style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+              {/* 圆形底+白色五边形 */}
+              <span style={{
+                display: 'inline-block',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: '#b4b8f8',
+                marginRight: '0.7em',
+                verticalAlign: 'middle',
+                flexShrink: 0,
+                position: 'relative'
+              }}>
+                <svg width="18" height="18" viewBox="0 0 18 18" style={{ position: 'absolute', top: 0, left: 0 }}>
+                  <polygon points="9,5 13.2,8 11.8,13 6.2,13 4.8,8" fill="#fff" />
+                </svg>
+              </span>
+              Stay on topic and keep discussions relevant
+            </li>
+            <li style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+              {/* 圆形底+白色星形 */}
+              <span style={{
+                display: 'inline-block',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: '#76cfc5',
+                marginRight: '0.7em',
+                verticalAlign: 'middle',
+                flexShrink: 0,
+                position: 'relative'
+              }}>
+                <svg width="18" height="18" viewBox="0 0 18 18" style={{ position: 'absolute', top: 0, left: 0 }}>
+                  <polygon points="9,5 10,8 13.2,8.3 10.8,10.3 11.6,13.5 9,11.7 6.4,13.5 7.2,10.3 4.8,8.3 8,8" fill="#fff" />
+                </svg>
+              </span>
+              No inappropriate, offensive, or illegal content
+            </li>
+            <li style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+              {/* 圆形底+白色心形 */}
+              <span style={{
+                display: 'inline-block',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: '#ffb400',
+                marginRight: '0.7em',
+                verticalAlign: 'middle',
+                flexShrink: 0,
+                position: 'relative'
+              }}>
+                <svg width="18" height="18" viewBox="0 0 18 18" style={{ position: 'absolute', top: 0, left: 0 }}>
+                  <path d="M9 14.5s-3.5-2.5-3.5-4.7A2.2 2.2 0 0 1 9 7.5a2.2 2.2 0 0 1 3.5 2.3c0 2.2-3.5 4.7-3.5 4.7z" fill="#fff" />
+                </svg>
+              </span>
+              Use clear, friendly, and inclusive language
+            </li>
           </ul>
         </div>
 
