@@ -1,201 +1,186 @@
 import { useState, useEffect } from 'react'
-import { getSiteSettings, getProjects, getSkills, getPosts, getCommentsPageConfig, getContactPageConfig } from '../services/wordpressApi'
-import { siteSettingsData, projectsData, skillsData, postsData, commentsPageData, contactPageData } from '../data/mockData'
+import { 
+  getProjects, 
+  getSkills, 
+  getPosts, 
+  getCommentsPageConfig, 
+  getContactPageConfig,
+  getPageConfig,
+  isWordPressConfigured 
+} from '../services/wordpressApi'
+import { 
+  heroData, 
+  aboutData, 
+  projectsData, 
+  skillsData, 
+  siteSettingsData,
+  postsData,
+  commentsPageData,
+  contactPageData
+} from '../data/mockData'
 
-// 使用站点设置的 Hook
-export const useSiteSettings = () => {
-  const [settings, setSettings] = useState(null)
-  const [loading, setLoading] = useState(true)
+// 通用数据获取hook
+const useWordPressData = (fetchFunction, fallbackData) => {
+  const [data, setData] = useState(fallbackData)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetchSettings = async () => {
+    const fetchData = async () => {
+      if (!isWordPressConfigured()) {
+        setData(fallbackData)
+        return
+      }
+
+      setLoading(true)
+      setError(null)
+
       try {
-        setLoading(true)
-        const wordpressSettings = await getSiteSettings()
-        
-        if (wordpressSettings) {
-          setSettings(wordpressSettings)
-        } else {
-          // 使用 mock 数据
-          setSettings(siteSettingsData)
-        }
+        const result = await fetchFunction()
+        setData(result)
       } catch (err) {
-        setError(err)
-        // 出错时使用 mock 数据
-        setSettings(siteSettingsData)
+        console.error('Error fetching data:', err)
+        setError(err.message)
+        setData(fallbackData)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchSettings()
-  }, [])
+    fetchData()
+  }, [fetchFunction, fallbackData])
 
-  return { settings, loading, error }
+  return { data, loading, error }
 }
 
-// 使用项目数据的 Hook
+// 获取首页数据
+export const useHomePageData = () => {
+  const [hero, setHero] = useState(heroData)
+  const [about, setAbout] = useState(aboutData)
+  const [projects, setProjects] = useState(projectsData)
+  const [skills, setSkills] = useState(skillsData)
+  const [siteSettings, setSiteSettings] = useState(siteSettingsData)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchHomePageData = async () => {
+      if (!isWordPressConfigured()) {
+        return
+      }
+
+      setLoading(true)
+      setError(null)
+
+      try {
+        // 获取首页配置
+        const homeConfig = await getPageConfig('home')
+        
+        // 更新hero数据
+        if (homeConfig.hero_title) {
+          setHero(prev => ({
+            ...prev,
+            title: homeConfig.hero_title,
+            subtitle: homeConfig.hero_subtitle,
+            description: homeConfig.hero_description,
+            buttonText: homeConfig.hero_button_text,
+            buttonLink: homeConfig.hero_button_link,
+            image: homeConfig.hero_image,
+          }))
+        }
+
+        // 更新about数据
+        if (homeConfig.about_title) {
+          setAbout(prev => ({
+            ...prev,
+            title: homeConfig.about_title,
+            description: homeConfig.about_description,
+            image: homeConfig.about_image,
+          }))
+        }
+
+        // 更新site settings
+        if (homeConfig.site_title) {
+          setSiteSettings(prev => ({
+            ...prev,
+            title: homeConfig.site_title,
+            description: homeConfig.site_description,
+            logo: homeConfig.site_logo,
+          }))
+        }
+
+      } catch (err) {
+        console.error('Error fetching home page data:', err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchHomePageData()
+  }, [])
+
+  return { hero, about, projects, skills, siteSettings, loading, error }
+}
+
+// 获取项目数据
 export const useProjects = () => {
-  const [projects, setProjects] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true)
-        const wordpressProjects = await getProjects()
-        
-        if (wordpressProjects && wordpressProjects.length > 0) {
-          setProjects(wordpressProjects)
-        } else {
-          // 使用 mock 数据
-          setProjects(projectsData)
-        }
-      } catch (err) {
-        setError(err)
-        // 出错时使用 mock 数据
-        setProjects(projectsData)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchProjects()
-  }, [])
-
-  return { projects, loading, error }
+  return useWordPressData(getProjects, projectsData)
 }
 
-// 使用技能数据的 Hook
+// 获取技能数据
 export const useSkills = () => {
-  const [skills, setSkills] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        setLoading(true)
-        const wordpressSkills = await getSkills()
-        
-        if (wordpressSkills && wordpressSkills.length > 0) {
-          setSkills(wordpressSkills)
-        } else {
-          // 使用 mock 数据
-          setSkills(skillsData)
-        }
-      } catch (err) {
-        setError(err)
-        // 出错时使用 mock 数据
-        setSkills(skillsData)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchSkills()
-  }, [])
-
-  return { skills, loading, error }
+  return useWordPressData(getSkills, skillsData)
 }
 
-// 使用文章数据的 Hook
+// 获取文章数据
 export const usePosts = () => {
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true)
-        const wordpressPosts = await getPosts()
-        
-        if (wordpressPosts && wordpressPosts.length > 0) {
-          setPosts(wordpressPosts)
-        } else {
-          // 使用 mock 数据
-          setPosts(postsData)
-        }
-      } catch (err) {
-        setError(err)
-        // 出错时使用 mock 数据
-        setPosts(postsData)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchPosts()
-  }, [])
-
-  return { posts, loading, error }
+  return useWordPressData(getPosts, postsData)
 }
 
-// 使用评论页面配置的 Hook
+// 获取评论页面配置
 export const useCommentsPageConfig = () => {
-  const [config, setConfig] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        setLoading(true)
-        const wordpressConfig = await getCommentsPageConfig()
-        
-        if (wordpressConfig) {
-          setConfig(wordpressConfig)
-        } else {
-          // 使用 mock 数据
-          setConfig(commentsPageData)
-        }
-      } catch (err) {
-        setError(err)
-        // 出错时使用 mock 数据
-        setConfig(commentsPageData)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchConfig()
-  }, [])
-
-  return { config, loading, error }
+  return useWordPressData(getCommentsPageConfig, commentsPageData)
 }
 
-// 使用联系页面配置的 Hook
+// 获取联系页面配置
 export const useContactPageConfig = () => {
-  const [config, setConfig] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  return useWordPressData(getContactPageConfig, contactPageData)
+}
 
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        setLoading(true)
-        const wordpressConfig = await getContactPageConfig()
-        
-        if (wordpressConfig) {
-          setConfig(wordpressConfig)
-        } else {
-          // 使用 mock 数据
-          setConfig(contactPageData)
-        }
-      } catch (err) {
-        setError(err)
-        // 出错时使用 mock 数据
-        setConfig(contactPageData)
-      } finally {
-        setLoading(false)
+// 获取站点设置
+export const useSiteSettings = () => {
+  return useWordPressData(
+    async () => {
+      const homeConfig = await getPageConfig('home')
+      return {
+        hero: {
+          name: homeConfig.hero_subtitle || siteSettingsData.hero.name,
+          title: homeConfig.hero_title || siteSettingsData.hero.title,
+          description: homeConfig.hero_description || siteSettingsData.hero.description,
+          avatar: homeConfig.hero_image || siteSettingsData.hero.avatar,
+          social_links: siteSettingsData.hero.social_links,
+          buttons: siteSettingsData.hero.buttons,
+        },
+        about: {
+          title: homeConfig.about_title || siteSettingsData.about.title,
+          content: homeConfig.about_description || siteSettingsData.about.content,
+          personal_info: siteSettingsData.about.personal_info,
+        },
+        site_info: {
+          title: homeConfig.site_title || siteSettingsData.site_info.title,
+          description: homeConfig.site_description || siteSettingsData.site_info.description,
+          author: siteSettingsData.site_info.author,
+          email: siteSettingsData.site_info.email,
+          phone: siteSettingsData.site_info.phone,
+          address: siteSettingsData.site_info.address,
+          copyright: siteSettingsData.site_info.copyright,
+        },
+        social_media: siteSettingsData.social_media,
+        navigation: siteSettingsData.navigation,
+        theme: siteSettingsData.theme,
       }
-    }
-
-    fetchConfig()
-  }, [])
-
-  return { config, loading, error }
+    },
+    siteSettingsData
+  )
 } 

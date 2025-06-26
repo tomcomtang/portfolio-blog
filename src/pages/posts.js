@@ -5,7 +5,7 @@ import Seo from "../components/seo"
 import { usePosts } from "../hooks/useWordPress"
 
 const PostsPage = () => {
-  const { posts: postsData, loading, error } = usePosts()
+  const { data: postsData, loading, error } = usePosts()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState([])
   const [expandedPosts, setExpandedPosts] = useState(new Set())
@@ -14,14 +14,21 @@ const PostsPage = () => {
   // 获取所有唯一的标签
   const allTags = useMemo(() => {
     const tags = new Set()
-    postsData.forEach(post => {
-      post.tags.forEach(tag => tags.add(tag))
-    })
+    if (postsData && Array.isArray(postsData)) {
+      postsData.forEach(post => {
+        if (post.tags && Array.isArray(post.tags)) {
+          post.tags.forEach(tag => tags.add(tag))
+        }
+      })
+    }
     return Array.from(tags).sort()
   }, [postsData])
 
   // 筛选文章
   const filteredPosts = useMemo(() => {
+    if (!postsData || !Array.isArray(postsData)) {
+      return []
+    }
     return postsData.filter(post => {
       const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            post.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||

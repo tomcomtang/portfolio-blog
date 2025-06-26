@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useEffect, useRef, useState } from "react"
 import { useSiteSettings, useProjects, useSkills } from '../hooks/useWordPress'
-import { projectsData, skillsData } from '../data/mockData'
+import { projectsData, skillsData, aboutData as defaultAboutData } from '../data/mockData'
 import { aboutStyles } from '../styles/homeStyles'
 
 const AboutMe = () => {
@@ -36,11 +36,11 @@ const AboutMe = () => {
   }
 
   // 获取数据，如果没有则使用默认值
-  const aboutData = settings?.about
+  const aboutData = settings?.about || defaultAboutData
 
-  // 使用 WordPress 数据或默认数据
-  const displayProjects = projects.length > 0 ? projects.slice(0, 3) : projectsData.slice(0, 3)
-  const displaySkills = skills.length > 0 ? skills : skillsData
+  // 使用 WordPress 数据或默认数据，添加安全检查
+  const displayProjects = (projects && projects.length > 0) ? projects.slice(0, 3) : projectsData.slice(0, 3)
+  const displaySkills = (skills && skills.length > 0) ? skills : skillsData
 
   // 将技能数据分成两列
   const leftSkills = displaySkills.filter((_, index) => index % 2 === 0)
@@ -63,9 +63,9 @@ const AboutMe = () => {
     <>
       <div style={aboutStyles.aboutSection}>
         <div style={aboutStyles.aboutContent}>
-          <h2 style={aboutStyles.aboutTitle}>{aboutData.title}</h2>
+          <h2 style={aboutStyles.aboutTitle}>{aboutData?.title || 'About Me'}</h2>
           <p style={aboutStyles.aboutText}>
-            {aboutData.content}
+            {aboutData?.content || 'Hi, I\'m Tom Tang, a passionate web developer and blogger. I love exploring new technologies and sharing knowledge with the community. On this blog, you\'ll find my thoughts on web development, tutorials, and project showcases. I hope my content can inspire others in their coding journey.'}
           </p>
         </div>
       </div>

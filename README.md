@@ -1,99 +1,186 @@
-<!-- AUTO-GENERATED-CONTENT:START (STARTER) -->
-<p align="center">
-  <a href="https://www.gatsbyjs.com">
-    <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
-  </a>
-</p>
-<h1 align="center">
-  Gatsby's default starter
-</h1>
+# Portfolio Blog - Gatsby + WordPress
 
-Kick off your project with this default boilerplate. This starter ships with the main Gatsby configuration files you might need to get up and running blazing fast with the blazing fast app generator for React.
+一个现代化的作品集博客，使用 Gatsby 构建，支持从 WordPress 动态获取数据或使用本地模拟数据。
 
-_Have another more specific idea? You may want to check out our vibrant collection of [official and community-created starters](https://www.gatsbyjs.com/docs/gatsby-starters/)._
+## ✨ 特性
 
-## 🚀 Quick start
+- 🎨 现代化响应式设计
+- 📝 动态内容管理（WordPress + 本地数据）
+- 🚀 基于 Gatsby 的快速性能
+- 💬 Giscus 评论系统集成
+- 📱 移动端优化
+- 🎯 SEO 友好
+- 🌙 深色模式支持（计划中）
 
-1.  **Create a Gatsby site.**
+## 🚀 快速开始
 
-    Use the Gatsby CLI ([install instructions](https://www.gatsbyjs.com/docs/tutorial/getting-started/part-0/#gatsby-cli)) to create a new site, specifying the default starter.
+### 1. 克隆项目
 
-    ```shell
-    # create a new Gatsby site using the default starter
-    gatsby new my-default-starter https://github.com/gatsbyjs/gatsby-starter-default
-    ```
+```bash
+git clone <your-repo-url>
+cd portfolio-blog
+```
 
-1.  **Start developing.**
+### 2. 安装依赖
 
-    Navigate into your new site’s directory and start it up.
+```bash
+npm install
+```
 
-    ```shell
-    cd my-default-starter/
-    gatsby develop
-    ```
+### 3. 环境配置
 
-1.  **Open the source code and start editing!**
+创建 `.env` 文件：
 
-    Your site is now running at `http://localhost:8000`!
+```bash
+# WordPress 集成（可选）
+GATSBY_WORDPRESS_URL=https://your-wordpress-site.com
 
-    Note: You'll also see a second link: `http://localhost:8000/___graphql`. This is a tool you can use to experiment with querying your data. Learn more about using this tool in the [Gatsby Tutorial](https://www.gatsbyjs.com/docs/tutorial/getting-started/part-4/#use-graphiql-to-explore-the-data-layer-and-write-graphql-queries).
+# 如果不设置 WordPress URL，将使用本地模拟数据
+```
 
-    Open the `my-default-starter` directory in your code editor of choice and edit `src/pages/index.js`. Save your changes and the browser will update in real time!
+### 4. 启动开发服务器
 
-## 🚀 Quick start (Netlify)
+```bash
+npm run develop
+```
 
-Deploy this starter with one click on [Netlify](https://app.netlify.com/signup):
+访问 `http://localhost:8000` 查看网站。
 
-[<img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" />](https://app.netlify.com/start/deploy?repository=https://github.com/gatsbyjs/gatsby-starter-default)
+## 📁 项目结构
 
-## 🧐 What's inside?
+```
+src/
+├── components/          # React 组件
+│   ├── HeroSection.js   # 首页英雄区域
+│   ├── AboutMe.js       # 关于我组件
+│   ├── header.js        # 页面头部
+│   └── layout.js        # 布局组件
+├── data/
+│   └── mockData.js      # 本地模拟数据
+├── hooks/
+│   └── useWordPress.js  # WordPress 数据获取 hooks
+├── pages/               # 页面组件
+│   ├── index.js         # 首页
+│   ├── posts.js         # 文章列表
+│   ├── comments.js      # 评论页面
+│   └── contact.js       # 联系页面
+├── services/
+│   └── wordpressApi.js  # WordPress API 服务
+└── styles/
+    ├── homeStyles.js    # 首页样式
+    ├── commentsStyles.js # 评论页面样式
+    └── contactStyles.js  # 联系页面样式
+```
 
-A quick look at the top-level files and directories you'll see in a typical Gatsby project.
+## 🔧 WordPress 集成
 
-    .
-    ├── node_modules
-    ├── src
-    ├── .gitignore
-    ├── gatsby-browser.js
-    ├── gatsby-config.js
-    ├── gatsby-node.js
-    ├── gatsby-ssr.js
-    ├── LICENSE
-    ├── package.json
-    └── README.md
+### 支持的数据类型
 
-1.  **`/node_modules`**: This directory contains all of the modules of code that your project depends on (npm packages) are automatically installed.
+- **首页内容**: Hero 区域、关于我、技能、项目
+- **文章管理**: 博客文章列表和详情
+- **页面配置**: 评论页面、联系页面设置
+- **站点设置**: 标题、描述、Logo 等
 
-1.  **`/src`**: This directory will contain all of the code related to what you will see on the front-end of your site (what you see in the browser) such as your site header or a page template. `src` is a convention for “source code”.
+### 数据获取策略
 
-1.  **`.gitignore`**: This file tells git which files it should not track / not maintain a version history for.
+1. **优先从 WordPress 获取**: 如果配置了 WordPress URL
+2. **回退到本地数据**: 如果 WordPress 不可用或未配置
+3. **错误处理**: 优雅处理网络错误和 API 失败
 
-1.  **`gatsby-browser.js`**: This file is where Gatsby expects to find any usage of the [Gatsby browser APIs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-browser/) (if any). These allow customization/extension of default Gatsby settings affecting the browser.
+### WordPress 设置
 
-1.  **`gatsby-config.js`**: This is the main configuration file for a Gatsby site. This is where you can specify information about your site (metadata) like the site title and description, which Gatsby plugins you’d like to include, etc. (Check out the [config docs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/) for more detail).
+详细设置指南请查看 [WordPress 设置指南](docs/wordpress-setup-guide.md)
 
-1.  **`gatsby-node.js`**: This file is where Gatsby expects to find any usage of the [Gatsby Node APIs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-node/) (if any). These allow customization/extension of default Gatsby settings affecting pieces of the site build process.
+## 🎨 自定义样式
 
-1.  **`gatsby-ssr.js`**: This file is where Gatsby expects to find any usage of the [Gatsby server-side rendering APIs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-ssr/) (if any). These allow customization of default Gatsby settings affecting server-side rendering.
+所有样式都集中在 `src/styles/` 目录中：
 
-1.  **`LICENSE`**: This Gatsby starter is licensed under the 0BSD license. This means that you can see this file as a placeholder and replace it with your own license.
+- `homeStyles.js` - 首页相关样式
+- `commentsStyles.js` - 评论页面样式
+- `contactStyles.js` - 联系页面样式
 
-1.  **`package.json`**: A manifest file for Node.js projects, which includes things like metadata (the project’s name, author, etc). This manifest is how npm knows which packages to install for your project.
+## 📝 内容管理
 
-1.  **`README.md`**: A text file containing useful reference information about your project.
+### 本地数据编辑
 
-## 🎓 Learning Gatsby
+编辑 `src/data/mockData.js` 来修改本地内容：
 
-Looking for more guidance? Full documentation for Gatsby lives [on the website](https://www.gatsbyjs.com/). Here are some places to start:
+```javascript
+export const heroData = {
+  title: "您的标题",
+  subtitle: "您的副标题",
+  description: "您的描述",
+  // ...
+}
+```
 
-- **For most developers, we recommend starting with our [in-depth tutorial for creating a site with Gatsby](https://www.gatsbyjs.com/docs/tutorial/getting-started/).** It starts with zero assumptions about your level of ability and walks through every step of the process.
+### WordPress 数据管理
 
-- **To dive straight into code samples, head [to our documentation](https://www.gatsbyjs.com/docs/).** In particular, check out the _Guides_, _API Reference_, and _Advanced Tutorials_ sections in the sidebar.
+1. 在 WordPress 后台创建相应页面
+2. 使用自定义字段存储数据
+3. 确保 REST API 已启用
 
-## 💫 Deploy
+## 🧪 测试
 
-[Build, Deploy, and Host On Netlify](https://netlify.com)
+访问 `/wordpress-test` 页面来测试 WordPress API 连接：
 
-The fastest way to combine your favorite tools and APIs to build the fastest sites, stores, and apps for the web. And also the best place to build, deploy, and host your Gatsby sites.
+```bash
+npm run develop
+# 然后访问 http://localhost:8000/wordpress-test
+```
 
-<!-- AUTO-GENERATED-CONTENT:END -->
+## 🚀 部署
+
+### Netlify 部署
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=YOUR_REPO_URL)
+
+### 手动部署
+
+```bash
+npm run build
+npm run serve
+```
+
+## 🔧 开发命令
+
+```bash
+npm run develop    # 启动开发服务器
+npm run build      # 构建生产版本
+npm run serve      # 本地预览生产版本
+npm run clean      # 清理缓存
+```
+
+## 📚 技术栈
+
+- **框架**: Gatsby 4
+- **语言**: JavaScript (ES6+)
+- **样式**: CSS Modules + Tailwind CSS
+- **数据**: WordPress REST API + 本地 JSON
+- **评论**: Giscus (GitHub Discussions)
+- **部署**: Netlify (推荐)
+
+## 🤝 贡献
+
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+## 🆘 支持
+
+如果遇到问题：
+
+1. 查看 [WordPress 设置指南](docs/wordpress-setup-guide.md)
+2. 检查浏览器控制台错误
+3. 运行 WordPress 测试页面
+4. 创建 Issue 描述问题
+
+---
+
+**注意**: 这是一个活跃开发中的项目，功能可能会持续更新和改进。
