@@ -175,4 +175,193 @@ export const siteSettingsData = {
     background_color: "#fafdff",
     text_color: "#333333"
   }
+}
+
+// 文章数据
+export const postsData = [
+  {
+    id: 1,
+    title: "Getting Started with Gatsby",
+    subtitle: "A comprehensive guide to building fast websites with Gatsby",
+    tags: ["Gatsby", "React", "Web Development"],
+    readTime: "8 min read",
+    date: "2024-01-15",
+    excerpt: "Learn how to build blazing fast websites with Gatsby, React, and GraphQL. This guide covers everything from setup to deployment.",
+    slug: "getting-started-with-gatsby"
+  },
+  {
+    id: 2,
+    title: "Advanced CSS Techniques",
+    subtitle: "Master modern CSS with Flexbox, Grid, and Custom Properties",
+    tags: ["CSS", "Frontend", "Design"],
+    readTime: "12 min read",
+    date: "2024-01-15",
+    excerpt: "Explore advanced CSS techniques including Flexbox, CSS Grid, and CSS Custom Properties to create modern, responsive layouts.",
+    slug: "advanced-css-techniques"
+  },
+  {
+    id: 3,
+    title: "JavaScript Performance Optimization",
+    subtitle: "Tips and tricks to make your JavaScript code faster",
+    tags: ["JavaScript", "Performance", "Web Development"],
+    readTime: "15 min read",
+    date: "2024-01-10",
+    excerpt: "Discover proven techniques to optimize your JavaScript code for better performance and user experience.",
+    slug: "javascript-performance-optimization"
+  },
+  {
+    id: 4,
+    title: "React Hooks Deep Dive",
+    subtitle: "Understanding useState, useEffect, and custom hooks",
+    tags: ["React", "JavaScript", "Frontend"],
+    readTime: "10 min read",
+    date: "2024-01-10",
+    excerpt: "A deep dive into React Hooks, covering useState, useEffect, and how to create custom hooks for reusable logic.",
+    slug: "react-hooks-deep-dive"
+  },
+  {
+    id: 5,
+    title: "SEO Best Practices for Developers",
+    subtitle: "Technical SEO strategies for better search rankings",
+    tags: ["SEO", "Web Development", "Marketing"],
+    readTime: "14 min read",
+    date: "2024-01-10",
+    excerpt: "Learn technical SEO strategies that developers can implement to improve search engine rankings and user experience.",
+    slug: "seo-best-practices-for-developers"
+  },
+  {
+    id: 6,
+    title: "Building REST APIs with Node.js",
+    subtitle: "Create robust APIs using Express.js and MongoDB",
+    tags: ["Node.js", "API", "Backend"],
+    readTime: "18 min read",
+    date: "2024-01-05",
+    excerpt: "Step-by-step guide to building RESTful APIs with Node.js, Express.js, and MongoDB with best practices and security considerations.",
+    slug: "building-rest-apis-with-nodejs"
+  },
+  {
+    id: 7,
+    title: "TypeScript for React Developers",
+    subtitle: "Adding type safety to your React applications",
+    tags: ["TypeScript", "React", "Frontend"],
+    readTime: "11 min read",
+    date: "2024-01-05",
+    excerpt: "Learn how to integrate TypeScript with React to build more robust and maintainable applications.",
+    slug: "typescript-for-react-developers"
+  },
+  {
+    id: 8,
+    title: "Modern JavaScript Features",
+    subtitle: "ES6+ features every developer should know",
+    tags: ["JavaScript", "ES6", "Frontend"],
+    readTime: "9 min read",
+    date: "2023-12-28",
+    excerpt: "Explore modern JavaScript features including arrow functions, destructuring, and async/await.",
+    slug: "modern-javascript-features"
+  }
+]
+
+// 评论页面配置数据
+export const commentsPageData = {
+  title: "Comments & Discussion",
+  description: "Share your thoughts, questions, or suggestions here. Let's connect and discuss!",
+  subtitle: "💬 Join the Discussion",
+  subtitle_description: "Have something to say or ask? Leave your comment below!",
+  giscus_config: {
+    repo: "tomcomtang/portfolio-blog",
+    repoId: "R_kgDOPBDz5Q",
+    category: "Ideas",
+    categoryId: "DIC_kwDOPBDz5c4Cr_AK",
+    mapping: "pathname",
+    reactionsEnabled: "1",
+    emitMetadata: "0",
+    inputPosition: "top",
+    theme: "noborder_light",
+    lang: "en",
+    loading: "lazy"
+  },
+  community_guidelines: [
+    {
+      text: "Be respectful and constructive in your comments",
+      color: "#76cfc5",
+      icon: "circle"
+    },
+    {
+      text: "No spam, self-promotion, or advertising allowed",
+      color: "#ffb400", 
+      icon: "square"
+    },
+    {
+      text: "No personal attacks, hate speech, or harassment",
+      color: "#ec6664",
+      icon: "triangle"
+    },
+    {
+      text: "Stay on topic and keep discussions relevant",
+      color: "#b4b8f8",
+      icon: "pentagon"
+    },
+    {
+      text: "No inappropriate, offensive, or illegal content",
+      color: "#76cfc5",
+      icon: "star"
+    },
+    {
+      text: "Use clear, friendly, and inclusive language",
+      color: "#ffb400",
+      icon: "heart"
+    }
+  ]
+}
+
+// 联系页面配置数据
+export const contactPageData = {
+  title: "Get In Touch",
+  description: "I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.",
+  contact_info: {
+    email: {
+      label: "Email",
+      value: "tom@example.com",
+      icon: "email",
+      gradient: "linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)"
+    },
+    phone: {
+      label: "Phone", 
+      value: "+1 (234) 567-890",
+      icon: "phone",
+      gradient: "linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)"
+    },
+    location: {
+      label: "Location",
+      value: "San Francisco, CA",
+      icon: "location",
+      gradient: "linear-gradient(135deg, #ffd93d 0%, #ff6b6b 100%)"
+    }
+  },
+  social_media: [
+    {
+      name: "Twitter",
+      url: "https://twitter.com/your_twitter",
+      icon: "twitter"
+    },
+    {
+      name: "LinkedIn",
+      url: "https://www.linkedin.com/in/your_linkedin", 
+      icon: "linkedin"
+    },
+    {
+      name: "Facebook",
+      url: "https://facebook.com/your_facebook",
+      icon: "facebook"
+    },
+    {
+      name: "GitHub",
+      url: "https://github.com/tomcomtang",
+      icon: "github"
+    }
+  ],
+  bottom_info: {
+    response_time: "I typically respond to messages within 24 hours during business days.",
+    closing_message: "Looking forward to hearing from you! 🚀"
+  }
 } 

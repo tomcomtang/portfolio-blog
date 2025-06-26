@@ -91,4 +91,119 @@ export const getSkills = async () => {
     console.error('Error fetching skills:', error)
     return []
   }
+}
+
+// 获取文章数据
+export const getPosts = async () => {
+  if (!isWordPressConfigured()) {
+    return []
+  }
+
+  try {
+    const response = await fetch(`${WORDPRESS_URL}/wp-json/wp/v2/posts?per_page=20&_embed`)
+    const posts = await response.json()
+    
+    return posts.map(post => ({
+      id: post.id,
+      title: post.title.rendered,
+      subtitle: post.acf?.subtitle || '',
+      tags: post.acf?.tags || [],
+      readTime: post.acf?.read_time || '5 min read',
+      date: post.date.split('T')[0], // 只取日期部分
+      excerpt: post.excerpt.rendered.replace(/<[^>]*>/g, ''), // 移除HTML标签
+      slug: post.slug
+    }))
+  } catch (error) {
+    console.error('Error fetching posts:', error)
+    return []
+  }
+}
+
+// 获取评论页面配置
+export const getCommentsPageConfig = async () => {
+  if (!isWordPressConfigured()) {
+    return null
+  }
+
+  try {
+    const response = await fetch(`${WORDPRESS_URL}/wp-json/wp/v2/pages?slug=comments`)
+    const pages = await response.json()
+    
+    if (pages && pages.length > 0) {
+      const page = pages[0]
+      return {
+        title: page.acf?.comments_title || "Comments & Discussion",
+        description: page.acf?.comments_description || "Share your thoughts, questions, or suggestions here. Let's connect and discuss!",
+        subtitle: page.acf?.comments_subtitle || "💬 Join the Discussion",
+        subtitle_description: page.acf?.comments_subtitle_description || "Have something to say or ask? Leave your comment below!",
+        giscus_config: {
+          repo: page.acf?.giscus_repo || "tomcomtang/portfolio-blog",
+          repoId: page.acf?.giscus_repo_id || "R_kgDOPBDz5Q",
+          category: page.acf?.giscus_category || "Ideas",
+          categoryId: page.acf?.giscus_category_id || "DIC_kwDOPBDz5c4Cr_AK",
+          mapping: page.acf?.giscus_mapping || "pathname",
+          reactionsEnabled: page.acf?.giscus_reactions_enabled || "1",
+          emitMetadata: page.acf?.giscus_emit_metadata || "0",
+          inputPosition: page.acf?.giscus_input_position || "top",
+          theme: page.acf?.giscus_theme || "noborder_light",
+          lang: page.acf?.giscus_lang || "en",
+          loading: page.acf?.giscus_loading || "lazy"
+        },
+        community_guidelines: page.acf?.community_guidelines || []
+      }
+    }
+    return null
+  } catch (error) {
+    console.error('Error fetching comments page config:', error)
+    return null
+  }
+}
+
+// 获取联系页面配置
+export const getContactPageConfig = async () => {
+  if (!isWordPressConfigured()) {
+    return null
+  }
+
+  try {
+    const response = await fetch(`${WORDPRESS_URL}/wp-json/wp/v2/pages?slug=contact`)
+    const pages = await response.json()
+    
+    if (pages && pages.length > 0) {
+      const page = pages[0]
+      return {
+        title: page.acf?.contact_title || "Get In Touch",
+        description: page.acf?.contact_description || "I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.",
+        contact_info: {
+          email: {
+            label: page.acf?.email_label || "Email",
+            value: page.acf?.email_value || "tom@example.com",
+            icon: page.acf?.email_icon || "email",
+            gradient: page.acf?.email_gradient || "linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)"
+          },
+          phone: {
+            label: page.acf?.phone_label || "Phone",
+            value: page.acf?.phone_value || "+1 (234) 567-890",
+            icon: page.acf?.phone_icon || "phone",
+            gradient: page.acf?.phone_gradient || "linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)"
+          },
+          location: {
+            label: page.acf?.location_label || "Location",
+            value: page.acf?.location_value || "San Francisco, CA",
+            icon: page.acf?.location_icon || "location",
+            gradient: page.acf?.location_gradient || "linear-gradient(135deg, #ffd93d 0%, #ff6b6b 100%)"
+          }
+        },
+        social_media: page.acf?.social_media || [],
+        bottom_info: {
+          response_time: page.acf?.response_time || "I typically respond to messages within 24 hours during business days.",
+          closing_message: page.acf?.closing_message || "Looking forward to hearing from you! 🚀"
+        }
+      }
+    }
+    return null
+  } catch (error) {
+    console.error('Error fetching contact page config:', error)
+    return null
+  }
 } 

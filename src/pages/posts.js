@@ -2,92 +2,10 @@ import * as React from "react"
 import { useState, useMemo } from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-
-// 模拟文章数据
-const postsData = [
-  {
-    id: 1,
-    title: "Getting Started with Gatsby",
-    subtitle: "A comprehensive guide to building fast websites with Gatsby",
-    tags: ["Gatsby", "React", "Web Development"],
-    readTime: "8 min read",
-    date: "2024-01-15",
-    excerpt: "Learn how to build blazing fast websites with Gatsby, React, and GraphQL. This guide covers everything from setup to deployment.",
-    slug: "getting-started-with-gatsby"
-  },
-  {
-    id: 2,
-    title: "Advanced CSS Techniques",
-    subtitle: "Master modern CSS with Flexbox, Grid, and Custom Properties",
-    tags: ["CSS", "Frontend", "Design"],
-    readTime: "12 min read",
-    date: "2024-01-15",
-    excerpt: "Explore advanced CSS techniques including Flexbox, CSS Grid, and CSS Custom Properties to create modern, responsive layouts.",
-    slug: "advanced-css-techniques"
-  },
-  {
-    id: 3,
-    title: "JavaScript Performance Optimization",
-    subtitle: "Tips and tricks to make your JavaScript code faster",
-    tags: ["JavaScript", "Performance", "Web Development"],
-    readTime: "15 min read",
-    date: "2024-01-10",
-    excerpt: "Discover proven techniques to optimize your JavaScript code for better performance and user experience.",
-    slug: "javascript-performance-optimization"
-  },
-  {
-    id: 4,
-    title: "React Hooks Deep Dive",
-    subtitle: "Understanding useState, useEffect, and custom hooks",
-    tags: ["React", "JavaScript", "Frontend"],
-    readTime: "10 min read",
-    date: "2024-01-10",
-    excerpt: "A deep dive into React Hooks, covering useState, useEffect, and how to create custom hooks for reusable logic.",
-    slug: "react-hooks-deep-dive"
-  },
-  {
-    id: 5,
-    title: "SEO Best Practices for Developers",
-    subtitle: "Technical SEO strategies for better search rankings",
-    tags: ["SEO", "Web Development", "Marketing"],
-    readTime: "14 min read",
-    date: "2024-01-10",
-    excerpt: "Learn technical SEO strategies that developers can implement to improve search engine rankings and user experience.",
-    slug: "seo-best-practices-for-developers"
-  },
-  {
-    id: 6,
-    title: "Building REST APIs with Node.js",
-    subtitle: "Create robust APIs using Express.js and MongoDB",
-    tags: ["Node.js", "API", "Backend"],
-    readTime: "18 min read",
-    date: "2024-01-05",
-    excerpt: "Step-by-step guide to building RESTful APIs with Node.js, Express.js, and MongoDB with best practices and security considerations.",
-    slug: "building-rest-apis-with-nodejs"
-  },
-  {
-    id: 7,
-    title: "TypeScript for React Developers",
-    subtitle: "Adding type safety to your React applications",
-    tags: ["TypeScript", "React", "Frontend"],
-    readTime: "11 min read",
-    date: "2024-01-05",
-    excerpt: "Learn how to integrate TypeScript with React to build more robust and maintainable applications.",
-    slug: "typescript-for-react-developers"
-  },
-  {
-    id: 8,
-    title: "Modern JavaScript Features",
-    subtitle: "ES6+ features every developer should know",
-    tags: ["JavaScript", "ES6", "Frontend"],
-    readTime: "9 min read",
-    date: "2023-12-28",
-    excerpt: "Explore modern JavaScript features including arrow functions, destructuring, and async/await.",
-    slug: "modern-javascript-features"
-  }
-]
+import { usePosts } from "../hooks/useWordPress"
 
 const PostsPage = () => {
+  const { posts: postsData, loading, error } = usePosts()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState([])
   const [expandedPosts, setExpandedPosts] = useState(new Set())
@@ -100,7 +18,7 @@ const PostsPage = () => {
       post.tags.forEach(tag => tags.add(tag))
     })
     return Array.from(tags).sort()
-  }, [])
+  }, [postsData])
 
   // 筛选文章
   const filteredPosts = useMemo(() => {
@@ -114,7 +32,7 @@ const PostsPage = () => {
       
       return matchesSearch && matchesTags
     })
-  }, [searchTerm, selectedTags])
+  }, [postsData, searchTerm, selectedTags])
 
   // 按日期分组posts
   const groupedPosts = useMemo(() => {
@@ -185,6 +103,50 @@ const PostsPage = () => {
       </defs>
     </svg>
   )
+
+  // 如果正在加载，显示加载状态
+  if (loading) {
+    return (
+      <Layout>
+        <Seo 
+          title="Blog Posts" 
+          description="Explore our collection of articles on web development, design, and technology."
+        />
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '50vh',
+          fontSize: '1.2rem',
+          color: '#666'
+        }}>
+          Loading posts...
+        </div>
+      </Layout>
+    )
+  }
+
+  // 如果有错误，显示错误信息
+  if (error) {
+    return (
+      <Layout>
+        <Seo 
+          title="Blog Posts" 
+          description="Explore our collection of articles on web development, design, and technology."
+        />
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '50vh',
+          fontSize: '1.2rem',
+          color: '#ec6664'
+        }}>
+          Error loading posts. Please try again later.
+        </div>
+      </Layout>
+    )
+  }
 
   return (
   <Layout>
