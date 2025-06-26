@@ -20,7 +20,6 @@ const WordPressDebugPage = () => {
 
       if (info.isConfigured) {
         try {
-          console.log('Testing WordPress API...')
           const posts = await getPostsWithWordPressTags()
           info.postsCount = posts.length
           info.posts = posts.slice(0, 2) // 只显示前2篇文章
@@ -109,13 +108,10 @@ const WordPressDebugPage = () => {
             <button 
               onClick={async () => {
                 try {
-                  console.log('Testing with hardcoded URL...')
                   const response = await fetch('https://public-api.wordpress.com/wp/v2/sites/tomchild5.wordpress.com/posts?_embed&per_page=5')
                   const posts = await response.json()
-                  console.log('Manual test result:', posts)
                   alert(`Manual test successful! Found ${posts.length} posts. Check console for details.`)
                 } catch (error) {
-                  console.error('Manual test failed:', error)
                   alert(`Manual test failed: ${error.message}`)
                 }
               }}

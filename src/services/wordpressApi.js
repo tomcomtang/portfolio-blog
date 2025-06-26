@@ -128,35 +128,35 @@ export const getPageConfig = async (pageSlug) => {
 };
 
 // 获取项目数据（使用自定义文章类型或普通文章）
-export const getProjects = async () => {
+export const getProjectsFromPage = async () => {
   try {
-    // 尝试获取自定义文章类型 'project'
-    let response = await fetch(`${WORDPRESS_URL}/wp-json/wp/v2/project?_embed`);
-    let projects = await response.json();
-    
-    // 如果没有自定义文章类型，尝试从普通文章中获取
-    if (!projects.length || projects[0].code === 'rest_no_route') {
-      response = await fetch(`${WORDPRESS_URL}/wp-json/wp/v2/posts?categories=projects&_embed`);
-      projects = await response.json();
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/pages?slug=projects`);
+    const pages = await response.json();
+    if (!pages || !pages.length) throw new Error('No projects page found');
+    const page = pages[0];
+    // 提取content.rendered中的JSON字符串
+    const content = page.content && page.content.rendered;
+    if (!content) throw new Error('No content in projects page');
+    // 尝试提取和解析JSON
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON found in projects page content');
+    const jsonString = jsonMatch[0]
+      .replace(/‘/g, "'") // 替换中文引号
+      .replace(/’/g, "'")
+      .replace(/“/g, '"')
+      .replace(/”/g, '"');
+    let projects = [];
+    try {
+      // eslint-disable-next-line no-eval
+      projects = eval('(' + jsonString + ')');
+      if (!Array.isArray(projects)) projects = [projects];
+    } catch (e) {
+      throw new Error('Failed to parse JSON from projects page: ' + e.message);
     }
-    
-    return projects.map(project => {
-      const meta = project.meta || {};
-      return {
-        id: project.id,
-        title: project.title.rendered,
-        description: project.excerpt.rendered,
-        image: meta.project_image || project.featured_media || '',
-        link: meta.project_link || '',
-        github: meta.project_github || '',
-        technologies: meta.project_technologies ? meta.project_technologies.split(',') : [],
-        featured: meta.project_featured === '1',
-        date: project.date,
-        slug: project.slug,
-      };
-    });
+    return projects;
   } catch (error) {
-    console.error('Error fetching projects:', error);
+    console.error('Error fetching projects from page:', error);
     throw error;
   }
 };
@@ -514,6 +514,110 @@ export const searchPosts = async (query) => {
     }));
   } catch (error) {
     console.error('Error searching posts:', error);
+    throw error;
+  }
+};
+
+// 从分类 description 字段获取 skills 数据
+export const getSkillsFromCategory = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    console.log(categories);
+    const skillsCat = categories.find(cat => cat.name.toLowerCase() === 'skills');
+    console.log('skillsCat', skillsCat);
+    if (!skillsCat || !skillsCat.description) throw new Error('No skills category or description found');
+    let skills = [];
+    try {
+      // description 可能带有 \r\n，先清理
+      const jsonString = skillsCat.description.replace(/\r?\n/g, '');
+      skills = eval('(' + jsonString + ')');
+      console.log('skills', skills)
+    } catch (e) {
+      throw new Error('Failed to parse JSON from skills category: ' + e.message);
+    }
+    return skills;
+  } catch (error) {
+    console.error('Error fetching skills from category:', error);
+    throw error;
+  }
+}
+
+// 从分类 description 字段获取 projects 数据
+export const getProjectsFromCategory = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    const projectsCat = categories.find(cat => cat.name.toLowerCase() === 'projects');
+    console.log('projectsCat', projectsCat);
+    if (!projectsCat || !projectsCat.description) throw new Error('No projects category or description found');
+    let projects = [];
+    try {
+      // description 可能带有 \r\n，先清理
+      const jsonString = projectsCat.description.replace(/\r?\n/g, '');
+      console.log('jsonString', jsonString);
+      projects = eval('(' + jsonString + ')');
+      console.log('projects', projects);
+      if (!Array.isArray(projects)) projects = [projects];
+    } catch (e) {
+      throw new Error('Failed to parse JSON from projects category: ' + e.message);
+    }
+    return projects;
+  } catch (error) {
+    console.error('Error fetching projects from category:', error);
+    throw error;
+  }
+}
+
+// 从分类描述字段获取社交媒体数据
+export const getSocialMediaFromCategory = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    
+    // 查找 socials 分类
+    const socialsCategory = categories.find(cat => cat.slug === 'socials');
+    if (!socialsCategory) {
+      throw new Error('Socials category not found');
+    }
+    
+    const description = socialsCategory.description;
+    if (!description) {
+      throw new Error('No description found in socials category');
+    }
+    
+    // 尝试提取和解析JSON
+    const jsonMatch = description.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      throw new Error('No JSON array found in socials category description');
+    }
+    
+    const jsonString = jsonMatch[0]
+      .replace(/\\r\\n/g, '\n') // 替换换行符
+      .replace(/\\/g, '') // 移除转义字符
+      .replace(/'/g, '"') // 替换单引号为双引号
+      .replace(/"/g, '"') // 替换中文引号
+      .replace(/"/g, '"');
+    
+    let socialMedia = [];
+    try {
+      // 使用 eval 解析 JavaScript 对象格式（key 不需要双引号）
+      // eslint-disable-next-line no-eval
+      socialMedia = eval('(' + jsonString + ')');
+      
+      if (!Array.isArray(socialMedia)) {
+        throw new Error('Parsed data is not an array');
+      }
+    } catch (e) {
+      throw new Error('Failed to parse data from socials category: ' + e.message);
+    }
+    
+    return socialMedia;
+  } catch (error) {
+    console.error('Error fetching social media from category:', error);
     throw error;
   }
 }; 

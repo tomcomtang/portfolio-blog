@@ -2,10 +2,11 @@ import * as React from "react"
 import { useState, useMemo } from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-import { usePostsWithWordPressTags } from "../hooks/useWordPress"
+import { usePostsWithWordPressTags, useProjectsFromPage } from "../hooks/useWordPress"
 
 const PostsPage = () => {
   const { data: postsData, loading, error } = usePostsWithWordPressTags()
+  const { data: projects, loading: projectsLoading, error: projectsError } = useProjectsFromPage()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState([])
   const [expandedPosts, setExpandedPosts] = useState(new Set())
@@ -569,6 +570,23 @@ const PostsPage = () => {
             ))
           )}
         </div>
+
+        {/* 项目列表渲染示例 */}
+        {projectsLoading ? (
+          <div>Loading projects...</div>
+        ) : projectsError ? (
+          <div style={{ color: 'red' }}>Error loading projects: {projectsError}</div>
+        ) : (
+          <div className="projects-list">
+            {projects && projects.length > 0 ? projects.map(project => (
+              <div key={project.id} className="project-card">
+                <h3>{project.title}</h3>
+                <p>{project.description}</p>
+                {/* 你可以根据mockData结构渲染更多字段，比如svg、technologies等 */}
+              </div>
+            )) : <div>No projects found.</div>}
+          </div>
+        )}
       </div>
   </Layout>
 )

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useEffect, useRef, useState } from "react"
-import { useSiteSettings, useProjects, useSkills } from '../hooks/useWordPress'
-import { projectsData, skillsData, aboutData as defaultAboutData } from '../data/mockData'
+import { useSiteSettings, useProjectsFromCategory, useSkillsFromCategory } from '../hooks/useWordPress'
+import { aboutData as defaultAboutData } from '../data/mockData'
 import { aboutStyles } from '../styles/homeStyles'
 
 const AboutMe = () => {
@@ -12,8 +12,8 @@ const AboutMe = () => {
 
   // 获取数据
   const { settings, loading: settingsLoading } = useSiteSettings()
-  const { projects, loading: projectsLoading } = useProjects()
-  const { skills, loading: skillsLoading } = useSkills()
+  const { data: projects, loading: projectsLoading, error: projectsError } = useProjectsFromCategory()
+  const { data: skills, loading: skillsLoading, error: skillsError } = useSkillsFromCategory()
 
   // 延迟显示卡片，避免布局计算导致的闪现
   useEffect(() => {
@@ -24,8 +24,13 @@ const AboutMe = () => {
     return () => clearTimeout(timer)
   }, [])
 
+  // 调试：打印接口返回的 skills 和 projects 数据
+  useEffect(() => {
+    
+  }, [projects, skills])
+
   // 如果正在加载，显示加载状态
-  if (settingsLoading || projectsLoading || skillsLoading) {
+  if (settingsLoading || skillsLoading || projectsLoading) {
     return (
       <div style={aboutStyles.aboutSection}>
         <div style={aboutStyles.aboutContent}>
@@ -38,9 +43,9 @@ const AboutMe = () => {
   // 获取数据，如果没有则使用默认值
   const aboutData = settings?.about || defaultAboutData
 
-  // 使用 WordPress 数据或默认数据，添加安全检查
-  const displayProjects = (projects && projects.length > 0) ? projects.slice(0, 3) : projectsData.slice(0, 3)
-  const displaySkills = (skills && skills.length > 0) ? skills : skillsData
+  // 只用接口数据，不再 fallback 到 mockData
+  const displayProjects = projects && projects.length > 0 ? projects.slice(0, 3) : []
+  const displaySkills = skills && skills.length > 0 ? skills : []
 
   // 将技能数据分成两列
   const leftSkills = displaySkills.filter((_, index) => index % 2 === 0)
@@ -79,7 +84,7 @@ const AboutMe = () => {
               style={aboutStyles.projectRow}
             >
               <div style={aboutStyles.projectImageContainer}>
-                {displayProjects[0]?.svg || projectsData[0].svg}
+                <img src={displayProjects[0]?.svg} alt={displayProjects[0]?.title} style={{ width: 400, height: 300 }} />
               </div>
               <div style={aboutStyles.projectContent}>
                 <h3 style={aboutStyles.projectTitle}>{displayProjects[0]?.title || displayProjects[0]?.title?.rendered}</h3>
@@ -167,7 +172,7 @@ const AboutMe = () => {
                 </div>
               </div>
               <div style={aboutStyles.projectImageContainer}>
-                {displayProjects[1]?.svg || projectsData[1].svg}
+                <img src={displayProjects[1]?.svg} alt={displayProjects[1]?.title} style={{ width: 400, height: 300 }} />
               </div>
             </div>
           </div>
@@ -181,7 +186,7 @@ const AboutMe = () => {
               style={aboutStyles.projectRow}
             >
               <div style={aboutStyles.projectImageContainer}>
-                {displayProjects[2]?.svg || projectsData[2].svg}
+                <img src={displayProjects[2]?.svg} alt={displayProjects[2]?.title} style={{ width: 400, height: 300 }} />
               </div>
               <div style={aboutStyles.projectContent}>
                 <h3 style={aboutStyles.projectTitle}>{displayProjects[2]?.title || displayProjects[2]?.title?.rendered}</h3>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { getPageConfig, getProjects, getSkills, getPosts, getPostsWithTags, getPostsWithWordPressTags, isWordPressConfigured } from '../services/wordpressApi'
+import { getPageConfig, getSkills, getPosts, getPostsWithTags, getPostsWithWordPressTags, isWordPressConfigured } from '../services/wordpressApi'
 import { usePostsWithTags, usePostsWithWordPressTags } from "../hooks/useWordPress"
 
 const WordPressTest = () => {
@@ -43,22 +43,7 @@ const WordPressTest = () => {
         }
       }
 
-      // 测试3: 获取项目数据
-      try {
-        const projects = await getProjects()
-        results.projects = {
-          status: 'success',
-          message: `Found ${projects.length} projects`,
-          data: projects
-        }
-      } catch (error) {
-        results.projects = {
-          status: 'error',
-          message: error.message
-        }
-      }
-
-      // 测试4: 获取技能数据
+      // 测试3: 获取技能数据
       try {
         const skills = await getSkills()
         results.skills = {
@@ -73,7 +58,7 @@ const WordPressTest = () => {
         }
       }
 
-      // 测试5: 获取文章数据
+      // 测试4: 获取文章数据
       try {
         const posts = await getPosts()
         results.posts = {

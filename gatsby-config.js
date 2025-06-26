@@ -14,10 +14,6 @@ module.exports = {
     author: `@gatsbyjs`,
     siteUrl: `https://gatsbystarterdefaultsource.gatsbyjs.io/`,
   },
-  // 设置环境变量
-  env: {
-    GATSBY_WORDPRESS_URL: process.env.GATSBY_WORDPRESS_URL || 'https://tomchild5.wordpress.com',
-  },
   plugins: [
     `gatsby-plugin-image`,
     `gatsby-plugin-react-helmet`,
