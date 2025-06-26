@@ -15,7 +15,9 @@ import {
   getSocialMediaFromCategory,
   getHeroFromCategory,
   getAboutFromCategory,
-  getFooterFromCategory
+  getFooterFromCategory,
+  getPostsPageMetaFromCategory,
+  getCommentsPageMetaFromCategory
 } from '../services/wordpressApi'
 import { 
   heroData, 
@@ -367,4 +369,54 @@ export const useFooterFromCategory = () => {
   }, []);
 
   return { footerData, loading, error };
+};
+
+// 专门请求posts页面主标题和副标题的Hook
+export const usePostsPageMetaFromCategory = () => {
+  const [meta, setMeta] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMeta = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getPostsPageMetaFromCategory();
+        setMeta(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMeta();
+  }, []);
+
+  return { meta, loading, error };
+};
+
+// 专门请求comments页面主标题、副标题、准则列表的Hook
+export const useCommentsPageMetaFromCategory = () => {
+  const [meta, setMeta] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMeta = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getCommentsPageMetaFromCategory();
+        setMeta(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMeta();
+  }, []);
+
+  return { meta, loading, error };
 }; 

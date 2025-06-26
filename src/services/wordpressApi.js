@@ -150,6 +150,7 @@ export const getProjectsFromPage = async () => {
     try {
       // eslint-disable-next-line no-eval
       projects = eval('(' + jsonString + ')');
+      console.log(projects);
       if (!Array.isArray(projects)) projects = [projects];
     } catch (e) {
       throw new Error('Failed to parse JSON from projects page: ' + e.message);
@@ -731,4 +732,79 @@ export const getFooterFromCategory = async () => {
     console.error('Error fetching footer data from category:', error);
     throw error;
   }
-}; 
+};
+
+// 获取posts页面主标题和副标题（从posts分类description读取JSON）
+export const getPostsPageMetaFromCategory = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    const postsCategory = categories.find(cat => cat.slug === 'posts');
+    if (!postsCategory) throw new Error('Posts category not found');
+    const description = postsCategory.description;
+    if (!description) throw new Error('No description found in posts category');
+    const jsonMatch = description.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON object found in posts category description');
+    let meta = {};
+    try {
+      // eslint-disable-next-line no-eval
+      meta = eval('(' + jsonMatch[0] + ')');
+    } catch (e) {
+      throw new Error('Failed to parse posts page meta: ' + e.message);
+    }
+    return meta;
+  } catch (error) {
+    console.error('Error fetching posts page meta from category:', error);
+    throw error;
+  }
+};
+
+// 获取comments页面主标题、副标题、准则列表（从comments分类description读取JSON）
+export const getCommentsPageMetaFromCategory = async () => {
+  console.log('getCommentsPageMetaFromCategory');
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    const commentsCategory = categories.find(cat => cat.slug === 'comments');
+    if (!commentsCategory) throw new Error('Comments category not found');
+    const description = commentsCategory.description;
+    if (!description) throw new Error('No description found in comments category');
+    const jsonMatch = description.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON object found in comments category description');
+    let meta = {};
+    try {
+      // eslint-disable-next-line no-eval
+      meta = eval('(' + jsonMatch[0] + ')');
+    } catch (e) {
+      throw new Error('Failed to parse comments page meta: ' + e.message);
+    }
+    return meta;
+  } catch (error) {
+    console.error('Error fetching comments page meta from category:', error);
+    throw error;
+  }
+};
+
+// 从分类 description 字段获取 comments 页面数据
+export const getCommentsFromCategory = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    const commentsCat = categories.find(cat => cat.slug === 'comments');
+    if (!commentsCat || !commentsCat.description) throw new Error('No comments category or description found');
+    let commentsData = {};
+    try {
+      commentsData = JSON.parse(commentsCat.description);
+    } catch (e) {
+      // 兼容没有双引号的情况
+      commentsData = eval('(' + commentsCat.description + ')');
+    }
+    return commentsData;
+  } catch (error) {
+    console.error('Error fetching comments from category:', error);
+    throw error;
+  }
+} 

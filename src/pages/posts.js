@@ -2,11 +2,11 @@ import * as React from "react"
 import { useState, useMemo } from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-import { usePostsWithWordPressTags, useProjectsFromPage } from "../hooks/useWordPress"
+import { usePostsWithWordPressTags, usePostsPageMetaFromCategory } from "../hooks/useWordPress"
 
 const PostsPage = () => {
   const { data: postsData, loading, error } = usePostsWithWordPressTags()
-  const { data: projects, loading: projectsLoading, error: projectsError } = useProjectsFromPage()
+  const { meta } = usePostsPageMetaFromCategory();
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState([])
   const [expandedPosts, setExpandedPosts] = useState(new Set())
@@ -116,34 +116,12 @@ const PostsPage = () => {
   if (loading) {
     return null;
   }
-
-  // 如果有错误，显示错误信息
-  if (error) {
-    return (
-      <Layout>
-        <Seo 
-          title="Blog Posts" 
-          description="Explore our collection of articles on web development, design, and technology."
-        />
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          minHeight: '50vh',
-          fontSize: '1.2rem',
-          color: '#ec6664'
-        }}>
-          Error loading posts from WordPress. Using mock data instead.
-        </div>
-      </Layout>
-    )
-  }
-
+  
   return (
   <Layout>
       <Seo 
-        title="Blog Posts" 
-        description="Explore our collection of articles on web development, design, and technology."
+        title={meta?.title || ''} 
+        description={meta?.subtitle || ''}
       />
       
       <style dangerouslySetInnerHTML={{
@@ -176,14 +154,14 @@ const PostsPage = () => {
             backgroundClip: 'text',
             color: 'transparent'
           }}>
-            Blog Posts
+            {meta?.title || ''}
           </h1>
           <p style={{ 
             fontSize: '1.2rem', 
             color: '#666', 
-            margin: '0 auto' 
+            margin: '0 auto'
           }}>
-            Explore our latest articles on web development, design, and technology
+            {meta?.subtitle || ''}
           </p>
         </div>
 
@@ -553,23 +531,6 @@ const PostsPage = () => {
             ))
           )}
         </div>
-
-        {/* 项目列表渲染示例 */}
-        {projectsLoading ? (
-          <div>Loading projects...</div>
-        ) : projectsError ? (
-          <div style={{ color: 'red' }}>Error loading projects: {projectsError}</div>
-        ) : (
-          <div className="projects-list">
-            {projects && projects.length > 0 ? projects.map(project => (
-              <div key={project.id} className="project-card">
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                {/* 你可以根据mockData结构渲染更多字段，比如svg、technologies等 */}
-              </div>
-            )) : <div>No projects found.</div>}
-          </div>
-        )}
       </div>
   </Layout>
 )
