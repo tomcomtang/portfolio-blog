@@ -365,7 +365,11 @@ const CommentsPage = () => {
             color: '#666',
             marginBottom: '2rem',
             textAlign: 'center',
-            lineHeight: 1.6
+            lineHeight: 1.6,
+            display: 'block',
+            width: '100%',
+            marginLeft: 'auto',
+            marginRight: 'auto'
           }}>
             Have something to say or ask? Leave your comment below!
           </p>
