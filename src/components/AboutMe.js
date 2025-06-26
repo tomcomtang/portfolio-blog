@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect, useRef, useState } from "react"
-import { useSiteSettings, useProjectsFromCategory, useSkillsFromCategory } from '../hooks/useWordPress'
+import { useAboutFromCategory, useProjectsFromCategory, useSkillsFromCategory } from '../hooks/useWordPress'
 import { aboutData as defaultAboutData } from '../data/mockData'
 import { aboutStyles } from '../styles/homeStyles'
 
@@ -11,7 +11,7 @@ const AboutMe = () => {
   const [hoveredProject, setHoveredProject] = useState(null)
 
   // 获取数据
-  const { settings, loading: settingsLoading } = useSiteSettings()
+  const { aboutData, loading: aboutLoading, error: aboutError } = useAboutFromCategory()
   const { data: projects, loading: projectsLoading, error: projectsError } = useProjectsFromCategory()
   const { data: skills, loading: skillsLoading, error: skillsError } = useSkillsFromCategory()
 
@@ -19,8 +19,7 @@ const AboutMe = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setCardVisible(true)
-    }, 500) // 等待500ms后开始显示
-    
+    }, 500)
     return () => clearTimeout(timer)
   }, [])
 
@@ -30,7 +29,7 @@ const AboutMe = () => {
   }, [projects, skills])
 
   // 如果正在加载，显示加载状态
-  if (settingsLoading || skillsLoading || projectsLoading) {
+  if (aboutLoading || skillsLoading || projectsLoading) {
     return (
       <div style={aboutStyles.aboutSection}>
         <div style={aboutStyles.aboutContent}>
@@ -40,8 +39,13 @@ const AboutMe = () => {
     )
   }
 
+  // 没有API数据时不渲染内容
+  if (!aboutData || !aboutData.title) {
+    return null;
+  }
+
   // 获取数据，如果没有则使用默认值
-  const aboutData = settings?.about || defaultAboutData
+  const about = aboutData || defaultAboutData
 
   // 只用接口数据，不再 fallback 到 mockData
   const displayProjects = projects && projects.length > 0 ? projects.slice(0, 3) : []
@@ -68,10 +72,8 @@ const AboutMe = () => {
     <>
       <div style={aboutStyles.aboutSection}>
         <div style={aboutStyles.aboutContent}>
-          <h2 style={aboutStyles.aboutTitle}>{aboutData?.title || 'About Me'}</h2>
-          <p style={aboutStyles.aboutText}>
-            {aboutData?.content || 'Hi, I\'m Tom Tang, a passionate web developer and blogger. I love exploring new technologies and sharing knowledge with the community. On this blog, you\'ll find my thoughts on web development, tutorials, and project showcases. I hope my content can inspire others in their coding journey.'}
-          </p>
+          <h2 style={aboutStyles.aboutTitle}>{aboutData.title}</h2>
+          <p style={aboutStyles.aboutText}>{aboutData.content}</p>
         </div>
       </div>
       <div style={dynamicNewSection}></div>

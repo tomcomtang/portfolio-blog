@@ -13,7 +13,8 @@ import {
   getSkillsFromCategory,
   getProjectsFromCategory,
   getSocialMediaFromCategory,
-  getHeroFromCategory
+  getHeroFromCategory,
+  getAboutFromCategory
 } from '../services/wordpressApi'
 import { 
   heroData, 
@@ -315,4 +316,29 @@ export const useHeroFromCategory = () => {
   }, []);
 
   return { heroData, loading, error };
+};
+
+// 专门请求aboutData的Hook
+export const useAboutFromCategory = () => {
+  const [aboutData, setAboutData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getAboutFromCategory();
+        setAboutData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAbout();
+  }, []);
+
+  return { aboutData, loading, error };
 }; 

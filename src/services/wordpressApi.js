@@ -671,4 +671,36 @@ export const getHeroFromCategory = async () => {
     console.error('Error fetching hero data from category:', error);
     throw error;
   }
+};
+
+// 获取aboutData（只需title和content字段）
+export const getAboutFromCategory = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    const aboutCategory = categories.find(cat => cat.slug === 'about');
+    if (!aboutCategory) throw new Error('About category not found');
+    const description = aboutCategory.description;
+    if (!description) throw new Error('No description found in about category');
+    // 尝试提取和解析JSON
+    const jsonMatch = description.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON object found in about category description');
+    let aboutData = {};
+    try {
+      // 允许非严格JSON格式
+      // eslint-disable-next-line no-eval
+      aboutData = eval('(' + jsonMatch[0] + ')');
+    } catch (e) {
+      throw new Error('Failed to parse aboutData: ' + e.message);
+    }
+    // 只返回title和content字段
+    return {
+      title: aboutData.title || '',
+      content: aboutData.content || ''
+    };
+  } catch (error) {
+    console.error('Error fetching about data from category:', error);
+    throw error;
+  }
 }; 
