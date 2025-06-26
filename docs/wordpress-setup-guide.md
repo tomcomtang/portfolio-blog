@@ -279,3 +279,148 @@ GATSBY_WORDPRESS_URL=https://your-wordpress-site.com
 4. **HTTPS**: 确保使用 HTTPS 连接
 
 这个设置方案完全不需要任何插件，只使用 WordPress 的原生功能，适合各种托管 WordPress 服务。
+
+## 概述
+
+本指南将帮助你在 WordPress 中设置数据，以便与 Gatsby 应用集成。由于 WordPress.com 托管版本的限制，我们将使用原生 WordPress 功能而不依赖插件。
+
+## 环境配置
+
+1. 在项目根目录创建 `.env` 文件：
+
+```bash
+GATSBY_WORDPRESS_URL=https://your-wordpress-site.com
+```
+
+2. 重启开发服务器以加载环境变量。
+
+## 文章和标签设置
+
+### 1. 创建标签
+
+1. 登录 WordPress 管理后台
+2. 进入 **文章 > 标签**
+3. 创建以下标签（基于你的 API 返回的标签）：
+   - API
+   - Backend
+   - CSS
+   - Design
+   - ES6
+   - Frontend
+   - Gatsby
+   - JavaScript
+   - Marketing
+   - Node.js
+
+### 2. 创建文章
+
+1. 进入 **文章 > 写文章**
+2. 为每篇文章设置：
+   - **标题**：文章标题
+   - **摘要**：文章摘要（用于列表显示）
+   - **内容**：完整文章内容
+   - **标签**：选择相关标签
+   - **分类**：选择文章分类（可选）
+   - **特色图片**：设置文章封面图（可选）
+
+### 3. 文章自定义字段（可选）
+
+如果需要额外的文章信息，可以在文章编辑页面添加自定义字段：
+
+- `post_subtitle` - 文章副标题
+- `post_read_time` - 阅读时间（如 "8 min read"）
+
+### 4. 测试 API 连接
+
+访问 `/wordpress-test` 页面测试：
+
+- 文章数据获取
+- 标签数据获取
+- 文章与标签的关联
+
+## API 端点
+
+### 文章列表
+
+```
+GET /wp-json/wp/v2/posts?_embed&per_page=20
+```
+
+### 标签列表
+
+```
+GET /wp-json/wp/v2/tags?per_page=100
+```
+
+### 单个文章
+
+```
+GET /wp-json/wp/v2/posts/{id}?_embed
+```
+
+## 数据结构
+
+### 文章对象
+
+```json
+{
+  "id": 123,
+  "title": "文章标题",
+  "subtitle": "文章副标题",
+  "excerpt": "文章摘要",
+  "content": "文章内容",
+  "date": "2024-01-15T10:00:00",
+  "slug": "article-slug",
+  "tags": ["JavaScript", "React"],
+  "readTime": "8 min read",
+  "author": "作者名",
+  "categories": ["Web Development"]
+}
+```
+
+### 标签对象
+
+```json
+{
+  "id": 457,
+  "name": "JavaScript",
+  "slug": "javascript",
+  "description": "JavaScript相关文章",
+  "count": 5
+}
+```
+
+## 故障排除
+
+### 1. API 返回空数据
+
+- 检查 WordPress URL 是否正确
+- 确认 WordPress 站点有公开的文章
+- 检查 WordPress REST API 是否启用
+
+### 2. 标签不显示
+
+- 确认文章已分配标签
+- 检查标签名称是否与预期匹配
+- 验证 API 返回的标签数据格式
+
+### 3. 权限问题
+
+- 确保 WordPress 站点允许公开访问
+- 检查是否有防火墙或安全插件阻止 API 访问
+
+## 开发提示
+
+1. **缓存问题**：WordPress.com 可能有缓存，更新内容后可能需要等待几分钟
+2. **API 限制**：注意 API 调用频率限制
+3. **数据同步**：Gatsby 应用会实时从 WordPress 获取最新数据
+4. **回退机制**：如果 WordPress API 失败，应用会使用本地 mock 数据
+
+## 下一步
+
+完成 WordPress 设置后，你可以：
+
+1. 在 WordPress 中创建和管理文章
+2. 在 Gatsby 应用中查看实时更新的文章列表
+3. 使用标签筛选功能
+4. 自定义文章样式和布局

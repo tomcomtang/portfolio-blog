@@ -2,10 +2,10 @@ import * as React from "react"
 import { useState, useMemo } from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-import { usePosts } from "../hooks/useWordPress"
+import { usePostsWithWordPressTags } from "../hooks/useWordPress"
 
 const PostsPage = () => {
-  const { data: postsData, loading, error } = usePosts()
+  const { data: postsData, loading, error } = usePostsWithWordPressTags()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState([])
   const [expandedPosts, setExpandedPosts] = useState(new Set())
@@ -31,7 +31,7 @@ const PostsPage = () => {
     }
     return postsData.filter(post => {
       const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           post.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (post.subtitle && post.subtitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
                            post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
       
       const matchesTags = selectedTags.length === 0 || 
@@ -127,7 +127,7 @@ const PostsPage = () => {
           fontSize: '1.2rem',
           color: '#666'
         }}>
-          Loading posts...
+          Loading posts and tags from WordPress...
         </div>
       </Layout>
     )
@@ -149,7 +149,7 @@ const PostsPage = () => {
           fontSize: '1.2rem',
           color: '#ec6664'
         }}>
-          Error loading posts. Please try again later.
+          Error loading posts from WordPress. Using mock data instead.
         </div>
       </Layout>
     )

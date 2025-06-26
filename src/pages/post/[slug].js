@@ -1,6 +1,9 @@
 import * as React from "react"
+import { useState, useEffect } from "react"
 import Layout from "../../components/layout"
 import Seo from "../../components/seo"
+import { getPostsWithWordPressTags } from "../../services/wordpressApi"
+import { postsData } from "../../data/mockData"
 
 // 模拟文章详情数据
 const postDetails = {
@@ -188,9 +191,57 @@ gatsby develop</code></pre>
 
 const PostPage = ({ pageContext }) => {
   const { slug } = pageContext
-  const post = postDetails[slug]
+  const [post, setPost] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  if (!post) {
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        // 尝试从WordPress API获取文章数据
+        const posts = await getPostsWithWordPressTags()
+        const wpPost = posts.find(p => p.slug === slug)
+        
+        if (wpPost) {
+          setPost(wpPost)
+        } else {
+          // 如果WordPress没有找到，使用mock数据
+          const mockPost = postsData.find(p => p.slug === slug)
+          if (mockPost) {
+            setPost(mockPost)
+          } else {
+            setError('Post not found')
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching post:', err)
+        // 回退到mock数据
+        const mockPost = postsData.find(p => p.slug === slug)
+        if (mockPost) {
+          setPost(mockPost)
+        } else {
+          setError('Post not found')
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPost()
+  }, [slug])
+
+  if (loading) {
+    return (
+      <Layout>
+        <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+          <h1 style={{ color: '#666', marginBottom: '1rem' }}>Loading...</h1>
+          <p style={{ color: '#999' }}>Loading article from WordPress...</p>
+        </div>
+      </Layout>
+    )
+  }
+
+  if (error || !post) {
     return (
       <Layout>
         <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
@@ -214,7 +265,7 @@ const PostPage = ({ pageContext }) => {
     <Layout>
       <Seo 
         title={post.title}
-        description={post.excerpt}
+        description={post.excerpt ? post.excerpt.replace(/<[^>]*>/g, '').substring(0, 160) : post.subtitle}
       />
       
       <style dangerouslySetInnerHTML={{

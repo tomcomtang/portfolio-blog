@@ -3,6 +3,8 @@ import {
   getProjects, 
   getSkills, 
   getPosts, 
+  getPostsWithTags,
+  getPostsWithWordPressTags,
   getCommentsPageConfig, 
   getContactPageConfig,
   getPageConfig,
@@ -136,6 +138,16 @@ export const useSkills = () => {
 // 获取文章数据
 export const usePosts = () => {
   return useWordPressData(getPosts, postsData)
+}
+
+// 获取带标签的完整文章数据（从WordPress API）
+export const usePostsWithTags = () => {
+  return useWordPressData(getPostsWithTags, postsData)
+}
+
+// 获取带WordPress标签的文章数据
+export const usePostsWithWordPressTags = () => {
+  return useWordPressData(getPostsWithWordPressTags, postsData)
 }
 
 // 获取评论页面配置

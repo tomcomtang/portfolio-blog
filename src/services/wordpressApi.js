@@ -1,9 +1,15 @@
 // WordPress API 服务
-const WORDPRESS_URL = process.env.GATSBY_WORDPRESS_URL
+const WORDPRESS_URL = process.env.GATSBY_WORDPRESS_URL || 'https://tomchild5.wordpress.com'
 
 // 检查是否配置了 WordPress URL
 export const isWordPressConfigured = () => {
   return !!WORDPRESS_URL && WORDPRESS_URL !== 'https://your-wordpress-site.com';
+}
+
+// 获取WordPress.com API URL
+const getWordPressComApiUrl = (endpoint) => {
+  const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+  return `https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/${endpoint}`;
 }
 
 // 获取站点设置
@@ -181,6 +187,134 @@ export const getSkills = async () => {
     return [];
   } catch (error) {
     console.error('Error fetching skills:', error);
+    throw error;
+  }
+};
+
+// 获取文章列表和标签（从WordPress API），其他内容从mock数据补充
+export const getPostsWithWordPressTags = async () => {
+  try {
+    // 从环境变量中提取站点名称
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    
+    // 获取WordPress文章列表 - 使用WordPress.com API格式
+    const postsResponse = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/posts?_embed&per_page=20`);
+    const wpPosts = await postsResponse.json();
+    
+    // 获取WordPress标签 - 使用WordPress.com API格式
+    const tagsResponse = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/tags?per_page=100`);
+    const wpTags = await tagsResponse.json();
+    
+    // 创建WordPress标签映射
+    const wpTagMap = {};
+    wpTags.forEach(tag => {
+      wpTagMap[tag.id] = {
+        id: tag.id,
+        name: tag.name,
+        slug: tag.slug,
+        description: tag.description,
+        count: tag.count
+      };
+    });
+    
+    // 导入mock数据
+    const { postsData } = await import('../data/mockData');
+    
+    // 合并WordPress文章和mock数据
+    return wpPosts.map((wpPost, index) => {
+      // 获取WordPress文章的标签
+      const wpPostTags = [];
+      if (wpPost._embedded && wpPost._embedded['wp:term']) {
+        wpPost._embedded['wp:term'].forEach(termGroup => {
+          termGroup.forEach(term => {
+            if (term.taxonomy === 'post_tag' && wpTagMap[term.id]) {
+              wpPostTags.push(wpTagMap[term.id].name);
+            }
+          });
+        });
+      }
+      
+      // 获取对应的mock数据（按索引匹配，如果超出范围则使用第一个）
+      const mockPost = postsData[index] || postsData[0];
+      
+      return {
+        id: wpPost.id,
+        title: wpPost.title.rendered,
+        subtitle: mockPost.subtitle, // 使用mock数据的副标题
+        excerpt: wpPost.excerpt.rendered,
+        content: wpPost.content.rendered,
+        date: wpPost.date,
+        modified: wpPost.modified,
+        slug: wpPost.slug,
+        tags: wpPostTags.length > 0 ? wpPostTags : mockPost.tags, // 优先使用WordPress标签
+        readTime: mockPost.readTime, // 使用mock数据的阅读时间
+        featured_media: wpPost.featured_media || mockPost.featured_media, // 优先使用WordPress特色图片
+        author: wpPost._embedded?.author?.[0]?.name || "Admin",
+        categories: wpPost._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || []
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching posts with WordPress tags:', error);
+    throw error;
+  }
+};
+
+// 获取完整的文章数据（包括tags）
+export const getPostsWithTags = async () => {
+  try {
+    // 获取文章列表
+    const postsResponse = await fetch(`${WORDPRESS_URL}/wp-json/wp/v2/posts?_embed&per_page=20`);
+    const posts = await postsResponse.json();
+    
+    // 获取所有标签
+    const tagsResponse = await fetch(`${WORDPRESS_URL}/wp-json/wp/v2/tags?per_page=100`);
+    const tags = await tagsResponse.json();
+    
+    // 创建tag ID到tag对象的映射
+    const tagMap = {};
+    tags.forEach(tag => {
+      tagMap[tag.id] = {
+        id: tag.id,
+        name: tag.name,
+        slug: tag.slug,
+        description: tag.description,
+        count: tag.count
+      };
+    });
+    
+    return posts.map(post => {
+      const meta = post.meta || {};
+      
+      // 获取文章的标签
+      const postTags = [];
+      if (post._embedded && post._embedded['wp:term']) {
+        post._embedded['wp:term'].forEach(termGroup => {
+          termGroup.forEach(term => {
+            if (term.taxonomy === 'post_tag' && tagMap[term.id]) {
+              postTags.push(tagMap[term.id].name);
+            }
+          });
+        });
+      }
+      
+      return {
+        id: post.id,
+        title: post.title.rendered,
+        subtitle: meta.post_subtitle || post.title.rendered,
+        excerpt: post.excerpt.rendered,
+        content: post.content.rendered,
+        date: post.date,
+        modified: post.modified,
+        slug: post.slug,
+        tags: postTags,
+        readTime: meta.post_read_time || "5 min read",
+        featured_media: post.featured_media,
+        author: post._embedded?.author?.[0]?.name || "Admin",
+        categories: post._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || []
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching posts with tags:', error);
     throw error;
   }
 };

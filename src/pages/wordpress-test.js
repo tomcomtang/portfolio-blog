@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { getPageConfig, getProjects, getSkills, getPosts, isWordPressConfigured } from '../services/wordpressApi'
+import { getPageConfig, getProjects, getSkills, getPosts, getPostsWithTags, getPostsWithWordPressTags, isWordPressConfigured } from '../services/wordpressApi'
+import { usePostsWithTags, usePostsWithWordPressTags } from "../hooks/useWordPress"
 
 const WordPressTest = () => {
   const [testResults, setTestResults] = useState({})
   const [loading, setLoading] = useState(false)
+  const { data: postsWithTags, loading: postsLoading, error: postsError } = usePostsWithTags()
+  const { data: postsWithWPTags, loading: wpPostsLoading, error: wpPostsError } = usePostsWithWordPressTags()
 
   const runTests = async () => {
     setLoading(true)
@@ -146,6 +149,66 @@ const WordPressTest = () => {
               ))}
             </div>
           )}
+
+          <h2>Posts with WordPress Tags + Mock Data Test</h2>
+          {wpPostsLoading && <p>Loading posts with WordPress tags and mock data...</p>}
+          {wpPostsError && <p style={{ color: 'red' }}>Error loading posts with WordPress tags: {wpPostsError}</p>}
+          {postsWithWPTags && (
+            <div>
+              <h3>Posts from WordPress API + Mock Data:</h3>
+              <ul>
+                {postsWithWPTags.map(post => (
+                  <li key={post.id}>
+                    <strong>{post.title}</strong>
+                    <br />
+                    <small>Subtitle: {post.subtitle}</small>
+                    <br />
+                    <small>Date: {new Date(post.date).toLocaleDateString()}</small>
+                    <br />
+                    <small>Tags: {post.tags ? post.tags.join(', ') : 'No tags'}</small>
+                    <br />
+                    <small>Read Time: {post.readTime}</small>
+                    <br />
+                    <small>Author: {post.author}</small>
+                    {post.excerpt && (
+                      <p style={{ marginLeft: '20px', color: '#666' }}>
+                        {post.excerpt.replace(/<[^>]*>/g, '').substring(0, 100)}...
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <h2>Posts with Tags Test</h2>
+          {postsLoading && <p>Loading posts with tags...</p>}
+          {postsError && <p style={{ color: 'red' }}>Error loading posts with tags: {postsError}</p>}
+          {postsWithTags && (
+            <div>
+              <h3>Posts from WordPress API with Tags:</h3>
+              <ul>
+                {postsWithTags.map(post => (
+                  <li key={post.id}>
+                    <strong>{post.title}</strong>
+                    <br />
+                    <small>Date: {new Date(post.date).toLocaleDateString()}</small>
+                    <br />
+                    <small>Tags: {post.tags ? post.tags.join(', ') : 'No tags'}</small>
+                    <br />
+                    <small>Author: {post.author}</small>
+                    {post.excerpt && (
+                      <p style={{ marginLeft: '20px', color: '#666' }}>
+                        {post.excerpt.replace(/<[^>]*>/g, '').substring(0, 100)}...
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <h2>Tags Test</h2>
 
           <div className="mt-8 p-4 bg-blue-50 rounded-lg">
             <h3 className="font-semibold text-blue-900 mb-2">使用说明</h3>
