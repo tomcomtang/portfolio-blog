@@ -326,4 +326,29 @@ export const contactPageData = {
     response_time: "I typically respond to messages within 24 hours during business days.",
     closing_message: "Looking forward to hearing from you! 🚀"
   }
+}
+
+// HeroSection 完整配置数据
+export const heroSectionConfig = {
+  // 基本信息
+  basic: {
+    name: "Tom Tang",
+    title: "I'm",
+    description: "I'm a web developer and blogger, passionate about sharing knowledge and building cool things with code.\nWelcome to my portfolio blog!",
+    avatar: "https://avatars.githubusercontent.com/u/20943608?v=4"
+  },
+  
+  // 按钮配置
+  buttons: [
+    {
+      text: "View Posts",
+      link: "/posts",
+      type: "primary"
+    },
+    {
+      text: "Contact Me", 
+      link: "/contact",
+      type: "secondary"
+    }
+  ]
 } 

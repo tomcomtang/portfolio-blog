@@ -512,4 +512,23 @@ export const aboutStyles = {
     minWidth: '50px',
     textAlign: 'center',
   },
+}
+
+// 社交媒体图标动画样式
+export const socialIconAnimation = {
+  '@keyframes fadeInUp': {
+    '0%': {
+      opacity: 0,
+      transform: 'translateY(20px) scale(0.8)'
+    },
+    '100%': {
+      opacity: 1,
+      transform: 'translateY(0) scale(1)'
+    }
+  },
+  socialIconAnimated: {
+    animation: 'fadeInUp 0.6s ease-out forwards',
+    opacity: 0,
+    transform: 'translateY(20px) scale(0.8)'
+  }
 } 

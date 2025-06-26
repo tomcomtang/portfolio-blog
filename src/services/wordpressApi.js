@@ -620,4 +620,55 @@ export const getSocialMediaFromCategory = async () => {
     console.error('Error fetching social media from category:', error);
     throw error;
   }
+};
+
+// 从分类描述字段获取Hero数据
+export const getHeroFromCategory = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    
+    // 查找 hero 分类
+    const heroCategory = categories.find(cat => cat.slug === 'hero');
+    if (!heroCategory) {
+      throw new Error('Hero category not found');
+    }
+    
+    const description = heroCategory.description;
+    if (!description) {
+      throw new Error('No description found in hero category');
+    }
+    
+    // 尝试提取和解析JSON
+    const jsonMatch = description.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('No JSON object found in hero category description');
+    }
+    
+    const jsonString = jsonMatch[0]
+      .replace(/\\r\\n/g, '\n') // 替换换行符
+      .replace(/\\/g, '') // 移除转义字符
+      .replace(/'/g, '"') // 替换单引号为双引号
+      .replace(/"/g, '"') // 替换中文引号
+      .replace(/"/g, '"');
+    
+    let heroData = {};
+    try {
+      // 使用 eval 解析 JavaScript 对象格式（key 不需要双引号）
+      // eslint-disable-next-line no-eval
+      heroData = eval('(' + jsonString + ')');
+      
+      if (typeof heroData !== 'object' || heroData === null) {
+        throw new Error('Parsed data is not an object');
+      }
+    } catch (e) {
+      throw new Error('Failed to parse data from hero category: ' + e.message);
+    }
+    
+    return heroData;
+  } catch (error) {
+    console.error('Error fetching hero data from category:', error);
+    throw error;
+  }
 }; 

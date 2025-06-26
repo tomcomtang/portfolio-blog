@@ -12,7 +12,8 @@ import {
   getProjectsFromPage,
   getSkillsFromCategory,
   getProjectsFromCategory,
-  getSocialMediaFromCategory
+  getSocialMediaFromCategory,
+  getHeroFromCategory
 } from '../services/wordpressApi'
 import { 
   heroData, 
@@ -288,4 +289,30 @@ export const useSocialMediaFromCategory = () => {
   }, []);
 
   return { socialMedia, loading, error };
+};
+
+// 从分类获取Hero数据的 Hook
+export const useHeroFromCategory = () => {
+  const [heroData, setHeroData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchHeroData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getHeroFromCategory();
+        setHeroData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHeroData();
+  }, []);
+
+  return { heroData, loading, error };
 }; 
