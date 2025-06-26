@@ -9,6 +9,7 @@ import * as React from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import { motion, AnimatePresence } from "framer-motion"
 import { useLocation } from "@reach/router"
+import { useFooterFromCategory } from '../hooks/useWordPress'
 
 import Header from "./header"
 import "./layout.css"
@@ -25,6 +26,7 @@ const Layout = ({ children }) => {
   `)
 
   const location = useLocation()
+  const { footerData, loading: footerLoading, error: footerError } = useFooterFromCategory();
 
   return (
     <>
@@ -57,39 +59,65 @@ const Layout = ({ children }) => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            flexWrap: 'nowrap',
+            gap: '0.5rem 1rem',
           }}
         >
-          <div>
-            © 2025 Your Name. All rights reserved. •{' '}
-            <a href="/privacy" style={{ color: '#000', textDecoration: 'none' }}>Privacy</a>
-            {' '}• Built with{' '}
-            <a href="https://www.gatsbyjs.com" style={{ color: '#000' }}>Gatsby</a> +{' '}
-            <a href="https://wordpress.org" style={{ color: '#000' }}>Wordpress</a>
+          <div style={{
+            flex: 1,
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {footerError && <span style={{ color: 'red' }}>Footer加载失败</span>}
+            {!footerLoading && !footerError && footerData && (
+              <>
+                {footerData.text}
+                {footerData.links && footerData.links.length > 0 && (
+                  <>
+                    {' • '}
+                    {footerData.links.map((link, idx) => (
+                      <React.Fragment key={link.url}>
+                        <a href={link.url} style={{ color: '#000', textDecoration: 'none', margin: '0 0.5em' }}>{link.title}</a>
+                        {idx < footerData.links.length - 1 && '•'}
+                      </React.Fragment>
+                    ))}
+                  </>
+                )}
+              </>
+            )}
           </div>
-          <a 
-            href="https://github.com/tomcomtang/portfolio-blog" 
-            style={{ 
-              color: '#000', 
-              textDecoration: 'none',
-              borderBottom: '1px solid #000',
-              paddingBottom: '1px',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.color = '#76cfc5';
-              e.target.style.borderBottomColor = '#76cfc5';
-              e.target.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#000';
-              e.target.style.borderBottomColor = '#000';
-              e.target.style.transform = 'translateY(0)';
-            }}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Star this project on Github
-          </a>
+          {footerData && footerData.github && (
+            <a 
+              href={footerData.github.url} 
+              style={{ 
+                color: '#000', 
+                textDecoration: 'none',
+                borderBottom: '1px solid #000',
+                paddingBottom: '1px',
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap',
+                maxWidth: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.color = '#76cfc5';
+                e.target.style.borderBottomColor = '#76cfc5';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = '#000';
+                e.target.style.borderBottomColor = '#000';
+                e.target.style.transform = 'translateY(0)';
+              }}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {footerData.github.text}
+            </a>
+          )}
         </footer>
       </div>
     </>

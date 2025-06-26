@@ -14,7 +14,8 @@ import {
   getProjectsFromCategory,
   getSocialMediaFromCategory,
   getHeroFromCategory,
-  getAboutFromCategory
+  getAboutFromCategory,
+  getFooterFromCategory
 } from '../services/wordpressApi'
 import { 
   heroData, 
@@ -341,4 +342,29 @@ export const useAboutFromCategory = () => {
   }, []);
 
   return { aboutData, loading, error };
+};
+
+// 专门请求footer数据的Hook
+export const useFooterFromCategory = () => {
+  const [footerData, setFooterData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchFooter = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getFooterFromCategory();
+        setFooterData(data.footer || data); // 兼容直接是footer对象或外层包裹footer
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFooter();
+  }, []);
+
+  return { footerData, loading, error };
 }; 

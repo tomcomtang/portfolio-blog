@@ -703,4 +703,32 @@ export const getAboutFromCategory = async () => {
     console.error('Error fetching about data from category:', error);
     throw error;
   }
+};
+
+// 获取footer配置（从footer分类description读取JSON）
+export const getFooterFromCategory = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    const footerCategory = categories.find(cat => cat.slug === 'footer');
+    if (!footerCategory) throw new Error('Footer category not found');
+    const description = footerCategory.description;
+    if (!description) throw new Error('No description found in footer category');
+    // 尝试提取和解析JSON
+    const jsonMatch = description.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON object found in footer category description');
+    let footerData = {};
+    try {
+      // 允许非严格JSON格式
+      // eslint-disable-next-line no-eval
+      footerData = eval('(' + jsonMatch[0] + ')');
+    } catch (e) {
+      throw new Error('Failed to parse footerData: ' + e.message);
+    }
+    return footerData;
+  } catch (error) {
+    console.error('Error fetching footer data from category:', error);
+    throw error;
+  }
 }; 

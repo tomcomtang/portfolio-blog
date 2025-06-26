@@ -114,24 +114,7 @@ const PostsPage = () => {
 
   // 如果正在加载，显示加载状态
   if (loading) {
-    return (
-      <Layout>
-        <Seo 
-          title="Blog Posts" 
-          description="Explore our collection of articles on web development, design, and technology."
-        />
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          minHeight: '50vh',
-          fontSize: '1.2rem',
-          color: '#666'
-        }}>
-          Loading posts and tags from WordPress...
-        </div>
-      </Layout>
-    )
+    return null;
   }
 
   // 如果有错误，显示错误信息

@@ -84,6 +84,10 @@ const HeroSection = () => {
     transition: `opacity 1s ease-out ${index * 0.15}s, transform 1s ease-out ${index * 0.15}s`
   });
 
+  if (heroLoading || socialMediaLoading) {
+    return null;
+  }
+
   // 如果出错，使用默认配置
   if (heroError) {
     console.error('Error loading hero data:', heroError);

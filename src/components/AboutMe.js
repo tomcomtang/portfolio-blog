@@ -30,13 +30,7 @@ const AboutMe = () => {
 
   // 如果正在加载，显示加载状态
   if (aboutLoading || skillsLoading || projectsLoading) {
-    return (
-      <div style={aboutStyles.aboutSection}>
-        <div style={aboutStyles.aboutContent}>
-          <h2 style={aboutStyles.aboutTitle}>Loading...</h2>
-        </div>
-      </div>
-    )
+    return null;
   }
 
   // 没有API数据时不渲染内容
