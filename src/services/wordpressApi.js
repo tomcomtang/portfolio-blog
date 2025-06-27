@@ -608,7 +608,7 @@ export const getSocialMediaFromCategory = async () => {
       // 使用 eval 解析 JavaScript 对象格式（key 不需要双引号）
       // eslint-disable-next-line no-eval
       socialMedia = eval('(' + jsonString + ')');
-      
+      console.log('socialMedia', JSON.stringify(socialMedia, null,2));
       if (!Array.isArray(socialMedia)) {
         throw new Error('Parsed data is not an array');
       }

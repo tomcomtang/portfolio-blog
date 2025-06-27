@@ -396,23 +396,23 @@ const PostPage = ({ pageContext }) => {
               display: 'flex',
               flexWrap: 'wrap',
               gap: '0.5rem'
-            }}>
-              {post.tags.map(tag => (
-                <span
-                  key={tag}
-                  style={{
-                    padding: '0.4rem 1rem',
-                    fontSize: '0.9rem',
-                    fontWeight: '500',
-                    border: '2px solid #76cfc5',
-                    borderRadius: '20px',
-                    backgroundColor: 'rgba(118,207,197,0.1)',
-                    color: '#76cfc5'
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
+          }}>
+            {post.tags.map(tag => (
+              <span
+                key={tag}
+                style={{
+                  padding: '0.4rem 1rem',
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                  border: '2px solid #76cfc5',
+                  borderRadius: '20px',
+                  backgroundColor: 'rgba(118,207,197,0.1)',
+                  color: '#76cfc5'
+                }}
+              >
+                {tag}
+              </span>
+            ))}
             </div>
 
             {/* 作者信息和元数据 */}
@@ -533,9 +533,9 @@ const PostPage = ({ pageContext }) => {
               color: '#666',
               margin: 0,
               flex: 1
-            }}>
-              Share it with your network or explore more articles in our blog.
-            </p>
+          }}>
+            Share it with your network or explore more articles in our blog.
+          </p>
             
             {/* 分享链接 */}
             <div style={{
