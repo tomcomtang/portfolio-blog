@@ -283,11 +283,6 @@ export const contactPageData = {
   bottom_info: {
     response_time: "I typically respond to messages within 24 hours during business days.",
     closing_message: "Looking forward to hearing from you! 🚀"
-  },
-  // SEO 配置
-  seo: {
-    title: "Contact Me",
-    description: "Get in touch with me for collaborations, questions, or just to say hello."
   }
 }
 

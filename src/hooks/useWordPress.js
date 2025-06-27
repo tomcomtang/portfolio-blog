@@ -17,7 +17,8 @@ import {
   getAboutFromCategory,
   getFooterFromCategory,
   getPostsPageMetaFromCategory,
-  getCommentsPageMetaFromCategory
+  getCommentsPageMetaFromCategory,
+  getContactFromCategory
 } from '../services/wordpressApi'
 import { 
   heroData, 
@@ -419,4 +420,9 @@ export const useCommentsPageMetaFromCategory = () => {
   }, []);
 
   return { meta, loading, error };
-}; 
+};
+
+// 获取联系页面数据
+export const useContactFromCategory = () => {
+  return useWordPressData(getContactFromCategory, contactPageData)
+} 

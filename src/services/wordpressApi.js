@@ -807,4 +807,30 @@ export const getCommentsFromCategory = async () => {
     console.error('Error fetching comments from category:', error);
     throw error;
   }
-} 
+}
+
+// 获取contact页面配置（从contact分类description读取JSON）
+export const getContactFromCategory = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const response = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`);
+    const categories = await response.json();
+    const contactCategory = categories.find(cat => cat.slug === 'contact');
+    if (!contactCategory) throw new Error('Contact category not found');
+    const description = contactCategory.description;
+    if (!description) throw new Error('No description found in contact category');
+    const jsonMatch = description.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON object found in contact category description');
+    let contactData = {};
+    try {
+      // eslint-disable-next-line no-eval
+      contactData = eval('(' + jsonMatch[0] + ')');
+    } catch (e) {
+      throw new Error('Failed to parse contact data: ' + e.message);
+    }
+    return contactData;
+  } catch (error) {
+    console.error('Error fetching contact data from category:', error);
+    throw error;
+  }
+}; 

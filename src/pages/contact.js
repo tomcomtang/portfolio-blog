@@ -1,9 +1,8 @@
 import * as React from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-import { contactPageData } from "../data/mockData"
 import { contactPageStyles } from "../styles/contactStyles"
-import { useSocialMediaFromCategory } from "../hooks/useWordPress"
+import { useSocialMediaFromCategory, useContactFromCategory } from "../hooks/useWordPress"
 
 // 渲染图标的辅助函数 - 使用 img 标签加载 SVG 文件
 const renderIcon = (iconType, socialMediaData) => {
@@ -55,7 +54,12 @@ const renderSocialIcon = (iconType, socialMediaData) => {
 }
 
 const ContactPage = () => {
-  const pageConfig = contactPageData
+  // 用于记录已使用的颜色，避免相邻图标使用相同颜色
+  const usedColors = React.useRef(new Set())
+
+  // 从WordPress API获取contact页面数据
+  const { data: contactData, loading: contactLoading, error: contactError } = useContactFromCategory()
+  console.log(contactData)
   // 从WordPress API获取社交媒体数据
   const { socialMedia, loading: socialMediaLoading, error: socialMediaError } = useSocialMediaFromCategory()
   
@@ -65,8 +69,20 @@ const ContactPage = () => {
   // 过滤出 type 为 'social' 的社交媒体数据（用于 Follow Me 区域）
   const socialMediaForFollow = socialMedia ? socialMedia.filter(item => item.type === 'social') : []
 
-  // 用于记录已使用的颜色，避免相邻图标使用相同颜色
-  const usedColors = React.useRef(new Set())
+  // 如果正在加载数据或没有数据，显示空白
+  if (contactLoading || socialMediaLoading || !contactData) {
+    return (
+      <Layout>
+        <Seo 
+          title="Contact" 
+          description="Get in touch"
+        />
+      </Layout>
+    )
+  }
+
+  // 使用API数据
+  const pageConfig = contactData
 
   const getRandomColor = () => {
     const gradients = [
@@ -100,33 +116,11 @@ const ContactPage = () => {
     return selectedColor
   }
 
-  // 如果正在加载社交媒体数据，显示加载状态
-  if (socialMediaLoading) {
-    return (
-      <Layout>
-        <Seo 
-          title={pageConfig.seo.title} 
-          description={pageConfig.seo.description}
-        />
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '50vh',
-          fontSize: '1.2rem',
-          color: '#666'
-        }}>
-          Loading contact information...
-        </div>
-      </Layout>
-    )
-  }
-
   return (
     <Layout>
       <Seo 
-        title={pageConfig.seo.title} 
-        description={pageConfig.seo.description}
+        title={pageConfig.title} 
+        description={pageConfig.description}
       />
       
       <style dangerouslySetInnerHTML={{
