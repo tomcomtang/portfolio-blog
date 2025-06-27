@@ -174,14 +174,14 @@ export const heroStyles = {
 
   heroSection: {
     background: '#fafdff',
-    height: 'calc(100vh - 60px)',
-    padding: '0',
-    display: 'block',
-    marginTop: '0',
-    marginLeft: 'calc(-1 * var(--size-gutter))',
-    marginRight: 'calc(-1 * var(--size-gutter))',
-    marginBottom: 'calc(-1 * var(--size-gutter))',
-    paddingTop: 'calc(var(--size-gutter) + 60px)',
+    minHeight: '100vh',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0,
+    margin: 0,
     fontFamily: 'var(--font-sans)',
   },
 }

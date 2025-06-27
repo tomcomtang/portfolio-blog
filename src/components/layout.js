@@ -32,12 +32,11 @@ const Layout = ({ children }) => {
     <>
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
       <div
-        style={{
-          margin: `0 auto`,
-          maxWidth: `1200px`,
-          padding: `var(--size-gutter)`,
-          paddingTop: `calc(var(--size-gutter) + 60px)`,
-        }}
+        style={
+          location.pathname === '/'
+            ? { margin: 0, padding: 0, maxWidth: '100%' }
+            : { margin: `0 auto`, maxWidth: `1200px`, padding: `var(--size-gutter)`, paddingTop: `calc(var(--size-gutter) + 60px)` }
+        }
       >
         <AnimatePresence mode="wait">
           <motion.main
