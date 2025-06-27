@@ -46,8 +46,10 @@ const PostsPage = () => {
   const groupedPosts = useMemo(() => {
     const groups = {};
     filteredPosts.forEach(post => {
-      if (!groups[post.date]) groups[post.date] = [];
-      groups[post.date].push(post);
+      // 提取日期部分，去掉时间部分
+      const dateOnly = post.date.split('T')[0];
+      if (!groups[dateOnly]) groups[dateOnly] = [];
+      groups[dateOnly].push(post);
     });
     // 保持日期降序
     return Object.entries(groups).sort((a, b) => new Date(b[0]) - new Date(a[0]));
