@@ -46,8 +46,8 @@ export const getSiteSettings = async () => {
           title: page.acf?.about_title || "About Me",
           content: page.acf?.about_content || "Hi, I'm Tom Tang, a passionate web developer and blogger. I love exploring new technologies and sharing knowledge with the community. On this blog, you'll find my thoughts on web development, tutorials, and project showcases. I hope my content can inspire others in their coding journey.",
           personal_info: {
-            name: page.acf?.personal_name || "Tom Tang",
-            bio: page.acf?.personal_bio || "Hi, I'm Tom Tang, a passionate web developer and blogger. I love exploring new technologies and sharing knowledge with the community. On this blog, you'll find my thoughts on web development, tutorials, and project showcases. I hope my content can inspire others in their coding journey.",
+            name: page.acf?.personal_name || "Someone Name",
+            bio: page.acf?.personal_bio || "Hi, I'm Someone, a passionate web developer and blogger. I love exploring new technologies and sharing knowledge with the community. On this blog, you'll find my thoughts on web development, tutorials, and project showcases. I hope my content can inspire others in their coding journey.",
             avatar: page.acf?.personal_avatar || "https://avatars.githubusercontent.com/u/20943608?v=4"
           }
         }
@@ -580,9 +580,7 @@ export const getProjectsFromCategory = async () => {
     try {
       // description 可能带有 \r\n，先清理
       const jsonString = projectsCat.description.replace(/\r?\n/g, '');
-      console.log('jsonString', jsonString);
       projects = eval('(' + jsonString + ')');
-      console.log('projects', projects);
       if (!Array.isArray(projects)) projects = [projects];
     } catch (e) {
       throw new Error('Failed to parse JSON from projects category: ' + e.message);
@@ -630,7 +628,6 @@ export const getSocialMediaFromCategory = async () => {
       // 使用 eval 解析 JavaScript 对象格式（key 不需要双引号）
       // eslint-disable-next-line no-eval
       socialMedia = eval('(' + jsonString + ')');
-      console.log('socialMedia', JSON.stringify(socialMedia, null,2));
       if (!Array.isArray(socialMedia)) {
         throw new Error('Parsed data is not an array');
       }
@@ -654,6 +651,7 @@ export const getHeroFromCategory = async () => {
     
     // 查找 hero 分类
     const heroCategory = categories.find(cat => cat.slug === 'hero');
+    console.log('heroCategory', heroCategory);
     if (!heroCategory) {
       throw new Error('Hero category not found');
     }
@@ -680,8 +678,9 @@ export const getHeroFromCategory = async () => {
     try {
       // 使用 eval 解析 JavaScript 对象格式（key 不需要双引号）
       // eslint-disable-next-line no-eval
+      console.log('jsonString', jsonString);
       heroData = eval('(' + jsonString + ')');
-      
+      console.log('heroData', heroData);
       if (typeof heroData !== 'object' || heroData === null) {
         throw new Error('Parsed data is not an object');
       }
