@@ -6,6 +6,15 @@ export const isWordPressConfigured = () => {
   return !!WORDPRESS_URL && WORDPRESS_URL !== 'https://your-wordpress-site.com';
 }
 
+// HTML解码函数
+const decodeHtmlEntities = (text) => {
+  if (!text) return text;
+  
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+};
+
 // 获取WordPress.com API URL
 const getWordPressComApiUrl = (endpoint) => {
   const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
@@ -240,16 +249,16 @@ export const getPostsWithWordPressTags = async () => {
       
       return {
         id: wpPost.id,
-        title: wpPost.title.rendered,
+        title: decodeHtmlEntities(wpPost.title.rendered),
         subtitle: mockPost.subtitle, // 使用mock数据的副标题
-        excerpt: wpPost.excerpt.rendered,
+        excerpt: decodeHtmlEntities(wpPost.excerpt.rendered),
         content: wpPost.content.rendered,
         date: wpPost.date,
         modified: wpPost.modified,
         slug: wpPost.slug,
         tags: wpPostTags.length > 0 ? wpPostTags : mockPost.tags, // 优先使用WordPress标签
         readTime: mockPost.readTime, // 使用mock数据的阅读时间
-        featured_media: wpPost.featured_media || mockPost.featured_media, // 优先使用WordPress特色图片
+        featured_media: wpPost.jetpack_featured_media_url || mockPost.featured_media, // 使用jetpack_featured_media_url
         author: wpPost._embedded?.author?.[0]?.name || "Admin",
         categories: wpPost._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || []
       };
@@ -300,16 +309,16 @@ export const getPostsWithTags = async () => {
       
       return {
         id: post.id,
-        title: post.title.rendered,
-        subtitle: meta.post_subtitle || post.title.rendered,
-        excerpt: post.excerpt.rendered,
+        title: decodeHtmlEntities(post.title.rendered),
+        subtitle: meta.post_subtitle || decodeHtmlEntities(post.title.rendered),
+        excerpt: decodeHtmlEntities(post.excerpt.rendered),
         content: post.content.rendered,
         date: post.date,
         modified: post.modified,
         slug: post.slug,
         tags: postTags,
         readTime: meta.post_read_time || "5 min read",
-        featured_media: post.featured_media,
+        featured_media: post.jetpack_featured_media_url,
         author: post._embedded?.author?.[0]?.name || "Admin",
         categories: post._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || []
       };
@@ -330,13 +339,13 @@ export const getPosts = async () => {
       const meta = post.meta || {};
       return {
         id: post.id,
-        title: post.title.rendered,
-        excerpt: post.excerpt.rendered,
+        title: decodeHtmlEntities(post.title.rendered),
+        excerpt: decodeHtmlEntities(post.excerpt.rendered),
         content: post.content.rendered,
         date: post.date,
         modified: post.modified,
         slug: post.slug,
-        featured_media: post.featured_media,
+        featured_media: post.jetpack_featured_media_url,
         author: post._embedded?.author?.[0]?.name || 'Unknown',
         categories: post._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || [],
         tags: post._embedded?.['wp:term']?.[1]?.map(tag => tag.name) || [],
@@ -440,13 +449,13 @@ export const getPost = async (slug) => {
     
     return {
       id: post.id,
-      title: post.title.rendered,
+      title: decodeHtmlEntities(post.title.rendered),
       content: post.content.rendered,
-      excerpt: post.excerpt.rendered,
+      excerpt: decodeHtmlEntities(post.excerpt.rendered),
       date: post.date,
       modified: post.modified,
       slug: post.slug,
-      featured_media: post.featured_media,
+      featured_media: post.jetpack_featured_media_url,
       author: post._embedded?.author?.[0]?.name || 'Unknown',
       categories: post._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || [],
       tags: post._embedded?.['wp:term']?.[1]?.map(tag => tag.name) || [],
@@ -479,13 +488,13 @@ export const getPostsByCategory = async (categorySlug) => {
     
     return posts.map(post => ({
       id: post.id,
-      title: post.title.rendered,
-      excerpt: post.excerpt.rendered,
+      title: decodeHtmlEntities(post.title.rendered),
+      excerpt: decodeHtmlEntities(post.excerpt.rendered),
       content: post.content.rendered,
       date: post.date,
       modified: post.modified,
       slug: post.slug,
-      featured_media: post.featured_media,
+      featured_media: post.jetpack_featured_media_url,
       author: post._embedded?.author?.[0]?.name || 'Unknown',
       categories: post._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || [],
     }));
@@ -503,13 +512,13 @@ export const searchPosts = async (query) => {
     
     return posts.map(post => ({
       id: post.id,
-      title: post.title.rendered,
-      excerpt: post.excerpt.rendered,
+      title: decodeHtmlEntities(post.title.rendered),
+      excerpt: decodeHtmlEntities(post.excerpt.rendered),
       content: post.content.rendered,
       date: post.date,
       modified: post.modified,
       slug: post.slug,
-      featured_media: post.featured_media,
+      featured_media: post.jetpack_featured_media_url,
       author: post._embedded?.author?.[0]?.name || 'Unknown',
       categories: post._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || [],
     }));
@@ -831,6 +840,35 @@ export const getContactFromCategory = async () => {
     return contactData;
   } catch (error) {
     console.error('Error fetching contact data from category:', error);
+    throw error;
+  }
+};
+
+// 调试函数：检查WordPress API返回的数据结构
+export const debugWordPressAPI = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    const postsResponse = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/posts?_embed&per_page=1`);
+    const posts = await postsResponse.json();
+    
+    if (posts.length > 0) {
+      const post = posts[0];
+      console.log('WordPress API Response:', {
+        id: post.id,
+        title: post.title?.rendered,
+        jetpack_featured_media_url: post.jetpack_featured_media_url,
+        featured_media: post.featured_media,
+        _embedded: post._embedded,
+        featured_media_details: post._embedded?.['wp:featuredmedia'],
+        source_url: post._embedded?.['wp:featuredmedia']?.[0]?.source_url,
+        media_details: post._embedded?.['wp:featuredmedia']?.[0]?.media_details,
+        sizes: post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes
+      });
+    }
+    
+    return posts;
+  } catch (error) {
+    console.error('Debug API Error:', error);
     throw error;
   }
 }; 

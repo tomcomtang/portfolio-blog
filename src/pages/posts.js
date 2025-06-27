@@ -494,35 +494,63 @@ const PostsPage = () => {
                             alignItems: 'center',
                             justifyContent: 'center',
                           }}>
-                            {(() => {
-                              const svgs = [
-                                // 蓝色
-                                <svg key="blue" width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <rect width="180" height="200" rx="16" fill="#4299e1"/>
-                                  <rect x="30" y="60" width="80" height="30" rx="8" fill="#fff"/>
-                                  <circle cx="50" cy="75" r="6" fill="#4299e1"/>
-                                  <circle cx="70" cy="75" r="6" fill="#4299e1"/>
-                                  <rect x="30" y="110" width="40" height="16" rx="8" fill="#fff"/>
-                                </svg>,
-                                // 绿色
-                                <svg key="green" width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <rect width="180" height="200" rx="16" fill="#38b2ac"/>
-                                  <rect x="30" y="50" width="90" height="20" rx="10" fill="#fff"/>
-                                  <rect x="30" y="80" width="70" height="20" rx="10" fill="#fff"/>
-                                  <circle cx="120" cy="60" r="7" fill="#38b2ac"/>
-                                  <circle cx="100" cy="90" r="7" fill="#38b2ac"/>
-                                </svg>,
-                                // 橙色
-                                <svg key="orange" width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <rect width="180" height="200" rx="16" fill="#ed8936"/>
-                                  <rect x="40" y="40" width="70" height="40" rx="8" fill="#fff"/>
-                                  <rect x="50" y="55" width="50" height="8" rx="4" fill="#ed8936"/>
-                                  <circle cx="60" cy="120" r="12" fill="#fff"/>
-                                  <circle cx="100" cy="120" r="12" fill="#fff"/>
-                                </svg>
-                              ];
-                              return svgs[index % svgs.length];
-                            })()}
+                            {post.featured_media ? (
+                              // 如果有特色图片，显示真实图片
+                              <img 
+                                src={post.featured_media}
+                                alt={post.title}
+                                style={{
+                                  width: 'auto',
+                                  height: 'auto',
+                                  maxWidth: '100%',
+                                  maxHeight: '100%',
+                                  objectFit: 'contain',
+                                }}
+                                onError={(e) => {
+                                  // 如果图片加载失败，显示默认SVG
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'flex';
+                                }}
+                              />
+                            ) : null}
+                            {/* 默认SVG封面图（当没有特色图片或图片加载失败时显示） */}
+                            <div style={{
+                              display: post.featured_media ? 'none' : 'flex',
+                              width: '100%',
+                              height: '100%',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}>
+                              {(() => {
+                                const svgs = [
+                                  // 蓝色
+                                  <svg key="blue" width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="180" height="200" rx="16" fill="#4299e1"/>
+                                    <rect x="30" y="60" width="80" height="30" rx="8" fill="#fff"/>
+                                    <circle cx="50" cy="75" r="6" fill="#4299e1"/>
+                                    <circle cx="70" cy="75" r="6" fill="#4299e1"/>
+                                    <rect x="30" y="110" width="40" height="16" rx="8" fill="#fff"/>
+                                  </svg>,
+                                  // 绿色
+                                  <svg key="green" width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="180" height="200" rx="16" fill="#38b2ac"/>
+                                    <rect x="30" y="50" width="90" height="20" rx="10" fill="#fff"/>
+                                    <rect x="30" y="80" width="70" height="20" rx="10" fill="#fff"/>
+                                    <circle cx="120" cy="60" r="7" fill="#38b2ac"/>
+                                    <circle cx="100" cy="90" r="7" fill="#38b2ac"/>
+                                  </svg>,
+                                  // 橙色
+                                  <svg key="orange" width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="180" height="200" rx="16" fill="#ed8936"/>
+                                    <rect x="40" y="40" width="70" height="40" rx="8" fill="#fff"/>
+                                    <rect x="50" y="55" width="50" height="8" rx="4" fill="#ed8936"/>
+                                    <circle cx="60" cy="120" r="12" fill="#fff"/>
+                                    <circle cx="100" cy="120" r="12" fill="#fff"/>
+                                  </svg>
+                                ];
+                                return svgs[index % svgs.length];
+                              })()}
+                            </div>
                           </div>
                         </div>
                       </React.Fragment>
