@@ -114,6 +114,9 @@ const PostsPage = () => {
     </svg>
   )
 
+  // 在PostsPage组件内添加一个生成随机时长的函数
+  const getRandomReadTime = () => `${Math.floor(Math.random() * 16) + 5} min read`;
+
   // 如果正在加载，显示加载状态
   if (loading) {
     return null;
@@ -434,7 +437,7 @@ const PostsPage = () => {
                         >
                           {/* 左侧：描述、时长、按钮 */}
                           <div style={{ flex: 2, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingLeft: '3rem' }}>
-                            <div style={{ fontSize: '1.1rem', color: '#333', marginBottom: '1rem', lineHeight: 1.7 }}>{post.excerpt}</div>
+                            <div style={{ fontSize: '1.1rem', color: '#333', marginBottom: '1rem', lineHeight: 1.7 }}>{post.excerpt.replace(/<[^>]+>/g, '')}</div>
                             {/* Read more + 箭头同步hover */}
                             <div
                               style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', marginBottom: 0 }}
@@ -461,7 +464,7 @@ const PostsPage = () => {
                               >
                                 Read more <span style={{ fontSize: '1.2rem' }}>→</span>
                               </a>
-                              <span style={{ fontSize: '0.95rem', color: '#888', margin: 0, whiteSpace: 'nowrap' }}>⏱️ {post.readTime}</span>
+                              <span style={{ fontSize: '0.95rem', color: '#888', margin: 0, whiteSpace: 'nowrap' }}>⏱️ {post.readTime || getRandomReadTime()}</span>
                               {/* 箭头同步hover */}
                               <button
                                 onClick={e => {
