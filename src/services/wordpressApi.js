@@ -206,10 +206,25 @@ export const getPostsWithWordPressTags = async () => {
   try {
     // 从环境变量中提取站点名称
     const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    console.log('Site name:', siteName);
     
     // 获取WordPress文章列表 - 使用WordPress.com API格式
     const postsResponse = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/posts?_embed&per_page=20`);
+    if (!postsResponse.ok) {
+      throw new Error(`WordPress API error: ${postsResponse.status} ${postsResponse.statusText}`);
+    }
     const wpPosts = await postsResponse.json();
+    
+    console.log('WordPress.com API Response:', wpPosts);
+    console.log('Posts count:', wpPosts.length);
+    if (wpPosts.length > 0) {
+      console.log('First post:', {
+        id: wpPosts[0].id,
+        title: wpPosts[0].title?.rendered,
+        slug: wpPosts[0].slug,
+        content: wpPosts[0].content?.rendered?.substring(0, 100) + '...'
+      });
+    }
     
     // 获取WordPress标签 - 使用WordPress.com API格式
     const tagsResponse = await fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/tags?per_page=100`);
@@ -227,11 +242,9 @@ export const getPostsWithWordPressTags = async () => {
       };
     });
     
-    // 导入mock数据
-    const { postsData } = await import('../data/mockData');
-    
-    // 合并WordPress文章和mock数据
-    return wpPosts.map((wpPost, index) => {
+    // 只用WordPress API数据
+    const processedPosts = wpPosts.map((wpPost, i) => {
+      console.log(`wpPost[${i}] 原始结构:`, wpPost);
       // 获取WordPress文章的标签
       const wpPostTags = [];
       if (wpPost._embedded && wpPost._embedded['wp:term']) {
@@ -243,26 +256,26 @@ export const getPostsWithWordPressTags = async () => {
           });
         });
       }
-      
-      // 获取对应的mock数据（按索引匹配，如果超出范围则使用第一个）
-      const mockPost = postsData[index] || postsData[0];
-      
       return {
         id: wpPost.id,
-        title: decodeHtmlEntities(wpPost.title.rendered),
-        subtitle: mockPost.subtitle, // 使用mock数据的副标题
-        excerpt: decodeHtmlEntities(wpPost.excerpt.rendered),
-        content: wpPost.content.rendered,
+        title: decodeHtmlEntities(wpPost.title?.rendered || ''),
+        subtitle: '',
+        excerpt: decodeHtmlEntities(wpPost.excerpt?.rendered || ''),
+        content: decodeHtmlEntities(wpPost.content?.rendered || ''),
         date: wpPost.date,
         modified: wpPost.modified,
         slug: wpPost.slug,
-        tags: wpPostTags.length > 0 ? wpPostTags : mockPost.tags, // 优先使用WordPress标签
-        readTime: mockPost.readTime, // 使用mock数据的阅读时间
-        featured_media: wpPost.jetpack_featured_media_url || mockPost.featured_media, // 使用jetpack_featured_media_url
+        tags: wpPostTags,
+        readTime: '',
+        featured_media: wpPost.jetpack_featured_media_url,
         author: wpPost._embedded?.author?.[0]?.name || "Admin",
         categories: wpPost._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || []
       };
     });
+    
+    console.log('Final processed posts:', processedPosts.map(p => ({ slug: p.slug, title: p.title })));
+    return processedPosts;
+    
   } catch (error) {
     console.error('Error fetching posts with WordPress tags:', error);
     throw error;
@@ -312,7 +325,7 @@ export const getPostsWithTags = async () => {
         title: decodeHtmlEntities(post.title.rendered),
         subtitle: meta.post_subtitle || decodeHtmlEntities(post.title.rendered),
         excerpt: decodeHtmlEntities(post.excerpt.rendered),
-        content: post.content.rendered,
+        content: decodeHtmlEntities(post.content.rendered), // 解码HTML实体
         date: post.date,
         modified: post.modified,
         slug: post.slug,
@@ -341,7 +354,7 @@ export const getPosts = async () => {
         id: post.id,
         title: decodeHtmlEntities(post.title.rendered),
         excerpt: decodeHtmlEntities(post.excerpt.rendered),
-        content: post.content.rendered,
+        content: decodeHtmlEntities(post.content.rendered), // 解码HTML实体
         date: post.date,
         modified: post.modified,
         slug: post.slug,
@@ -450,7 +463,7 @@ export const getPost = async (slug) => {
     return {
       id: post.id,
       title: decodeHtmlEntities(post.title.rendered),
-      content: post.content.rendered,
+      content: decodeHtmlEntities(post.content.rendered), // 解码HTML实体
       excerpt: decodeHtmlEntities(post.excerpt.rendered),
       date: post.date,
       modified: post.modified,
@@ -490,7 +503,7 @@ export const getPostsByCategory = async (categorySlug) => {
       id: post.id,
       title: decodeHtmlEntities(post.title.rendered),
       excerpt: decodeHtmlEntities(post.excerpt.rendered),
-      content: post.content.rendered,
+      content: decodeHtmlEntities(post.content.rendered), // 解码HTML实体
       date: post.date,
       modified: post.modified,
       slug: post.slug,
@@ -514,7 +527,7 @@ export const searchPosts = async (query) => {
       id: post.id,
       title: decodeHtmlEntities(post.title.rendered),
       excerpt: decodeHtmlEntities(post.excerpt.rendered),
-      content: post.content.rendered,
+      content: decodeHtmlEntities(post.content.rendered), // 解码HTML实体
       date: post.date,
       modified: post.modified,
       slug: post.slug,

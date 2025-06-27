@@ -34,7 +34,7 @@ const Layout = ({ children }) => {
       <div
         style={{
           margin: `0 auto`,
-          maxWidth: `var(--size-content)`,
+          maxWidth: `1200px`,
           padding: `var(--size-gutter)`,
           paddingTop: `calc(var(--size-gutter) + 60px)`,
         }}
