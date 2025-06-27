@@ -280,51 +280,14 @@ export const commentsPageData = {
 export const contactPageData = {
   title: "Get In Touch",
   description: "I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.",
-  contact_info: {
-    email: {
-      label: "Email",
-      value: "tom@example.com",
-      icon: "email",
-      gradient: "linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)"
-    },
-    phone: {
-      label: "Phone", 
-      value: "+1 (234) 567-890",
-      icon: "phone",
-      gradient: "linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)"
-    },
-    location: {
-      label: "Location",
-      value: "San Francisco, CA",
-      icon: "location",
-      gradient: "linear-gradient(135deg, #ffd93d 0%, #ff6b6b 100%)"
-    }
-  },
-  social_media: [
-    {
-      name: "Twitter",
-      url: "https://twitter.com/your_twitter",
-      icon: "twitter"
-    },
-    {
-      name: "LinkedIn",
-      url: "https://www.linkedin.com/in/your_linkedin", 
-      icon: "linkedin"
-    },
-    {
-      name: "Facebook",
-      url: "https://facebook.com/your_facebook",
-      icon: "facebook"
-    },
-    {
-      name: "GitHub",
-      url: "https://github.com/tomcomtang",
-      icon: "github"
-    }
-  ],
   bottom_info: {
     response_time: "I typically respond to messages within 24 hours during business days.",
     closing_message: "Looking forward to hearing from you! 🚀"
+  },
+  // SEO 配置
+  seo: {
+    title: "Contact Me",
+    description: "Get in touch with me for collaborations, questions, or just to say hello."
   }
 }
 
