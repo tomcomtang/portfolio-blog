@@ -1,7 +1,6 @@
 import * as React from "react"
 import { Link } from "gatsby"
 import { useHeroFromCategory, useSocialMediaFromCategory } from '../hooks/useWordPress'
-import { heroSectionConfig } from '../data/mockData'
 import { heroStyles } from '../styles/homeStyles'
 
 // 鼠标悬停事件处理函数
@@ -48,12 +47,8 @@ function handleAvatarMouseOut(e) {
 }
 
 const HeroSection = () => {
-  // 从WordPress API获取Hero数据
   const { heroData, loading: heroLoading, error: heroError } = useHeroFromCategory()
-  // 从WordPress API获取社交媒体数据
   const { socialMedia, loading: socialMediaLoading, error: socialMediaError } = useSocialMediaFromCategory()
-
-  // 过滤出 type 为 'social' 的社交媒体数据，用于首页显示
   const socialMediaForHome = socialMedia ? socialMedia.filter(item => item.type === 'social') : []
 
   // Hero内容的动画样式
@@ -88,88 +83,15 @@ const HeroSection = () => {
   });
 
   if (heroLoading || socialMediaLoading) {
-    return null;
+    return <div>Loading...</div>;
   }
-
-  // 如果出错，使用默认配置
   if (heroError) {
-    console.error('Error loading hero data:', heroError);
-    const { basic, buttons } = heroSectionConfig;
-    
-    return (
-      <div style={heroStyles.heroSection}>
-        <div style={heroStyles.contentWrapper}>
-          <div style={heroStyles.leftCol}>
-            <p style={heroStyles.normalText}>{basic.title}</p>
-            <h1 style={heroStyles.bigText}>{basic.name}</h1>
-            <p style={heroStyles.introText}>
-              {basic.description}
-            </p>
-            <div style={heroStyles.btnRow}>
-              {buttons && buttons.length > 0 ? (
-                buttons.map((button, index) => (
-                  <Link 
-                    key={index}
-                    to={button.link} 
-                    style={button.type === 'primary' ? heroStyles.btn : heroStyles.btnAlt} 
-                    onMouseOver={button.type === 'primary' ? handleBtnMouseOver : handleBtnAltMouseOver} 
-                    onMouseOut={button.type === 'primary' ? handleBtnMouseOut : handleBtnAltMouseOut} 
-                    onFocus={button.type === 'primary' ? handleBtnMouseOver : handleBtnAltMouseOver} 
-                    onBlur={button.type === 'primary' ? handleBtnMouseOut : handleBtnAltMouseOut}
-                  >
-                    {button.text}
-                  </Link>
-                ))
-              ) : (
-                <>
-                  <Link to="/posts" style={heroStyles.btn} onMouseOver={handleBtnMouseOver} onMouseOut={handleBtnMouseOut} onFocus={handleBtnMouseOver} onBlur={handleBtnMouseOut}>View Posts</Link>
-                  <Link to="/contact" style={heroStyles.btnAlt} onMouseOver={handleBtnAltMouseOver} onMouseOut={handleBtnAltMouseOut} onFocus={handleBtnAltMouseOver} onBlur={handleBtnAltMouseOut}>Contact Me</Link>
-                </>
-              )}
-            </div>
-          </div>
-          <div style={heroStyles.rightCol}>
-            <img src={basic.avatar} alt="avatar" style={avatarStyle} onMouseOver={handleAvatarMouseOver} onMouseOut={handleAvatarMouseOut} />
-            <div style={socialListStyle}>
-              {socialMediaForHome && socialMediaForHome.length > 0 && socialMediaForHome.map((social, index) => (
-                <a 
-                  key={index}
-                  href={social.val} 
-                  style={getSocialIconStyle(index)}
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  title={social.name} 
-                  onMouseOver={handleSocialIconMouseOver} 
-                  onMouseOut={handleSocialIconMouseOut}
-                >
-                  <img src={`/svg/${social.svg}`} alt={social.name} style={heroStyles.svgStyle} />
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <div>Error loading hero data: {heroError.message || heroError.toString()}</div>;
   }
-
-  // 使用从API获取的数据，如果没有数据则使用默认配置
-  const data = heroData || heroSectionConfig;
-  const { basic, buttons } = data;
-
-  // 安全检查，确保basic存在
-  if (!basic) {
-    return (
-      <div style={heroStyles.heroSection}>
-        <div style={heroStyles.contentWrapper}>
-          <div style={heroStyles.leftCol}>
-            <div style={heroContentStyle}>
-              <p style={heroStyles.normalText}>Loading...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  if (!heroData || !heroData.basic) {
+    return <div>No hero data available.</div>;
   }
+  const { basic, buttons } = heroData;
 
   return (
     <div style={heroStyles.heroSection}>
