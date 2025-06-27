@@ -35,8 +35,8 @@ export const getSiteSettings = async () => {
       const page = pages[0]
       return {
         hero: {
-          name: page.acf?.hero_name || "Tom Tang",
-          title: page.acf?.hero_title || "I'm",
+          name: page.acf?.name || "Someone Name",
+          title: page.acf?.title || "I'm",
           description: page.acf?.hero_description || "I'm a web developer and blogger, passionate about sharing knowledge and building cool things with code.\nWelcome to my portfolio blog!",
           avatar: page.acf?.hero_avatar || "https://avatars.githubusercontent.com/u/20943608?v=4",
           social_links: page.acf?.social_links || [],
