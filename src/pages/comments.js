@@ -1,12 +1,47 @@
 import * as React from "react"
+import { graphql } from "gatsby"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 import { commentsPageStyles } from "../styles/commentsStyles"
 import Giscus from '@giscus/react';
-import { getCommentsFromCategory } from "../services/wordpressApi"
 
 const ICONS = ["circle", "square", "triangle", "pentagon", "star", "heart"];
 const COLORS = ["#76cfc5", "#ffb400", "#ec6664", "#b4b8f8", "#76cfc5", "#ffb400"];
+
+// HTML解码函数
+const decodeHtml = (html) => {
+  if (!html) return '';
+  return html
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8216;/g, "'")
+    .replace(/&#8220;/g, '"')
+    .replace(/&#8221;/g, '"')
+    .replace(/&#8211;/g, '–')
+    .replace(/&#8212;/g, '—')
+    .replace(/&#8230;/g, '…')
+    .replace(/&#8242;/g, "'")
+    .replace(/&#8243;/g, '"')
+    .replace(/&#8482;/g, '™')
+    .replace(/&#169;/g, '©')
+    .replace(/&#174;/g, '®')
+    .replace(/&#215;/g, '×')
+    .replace(/&#247;/g, '÷')
+    .replace(/&#176;/g, '°')
+    .replace(/&#177;/g, '±')
+    .replace(/&#181;/g, 'µ')
+    .replace(/&#183;/g, '·')
+    .replace(/&#187;/g, '»')
+    .replace(/&#171;/g, '«')
+    .replace(/&#150;/g, '–')
+    .replace(/&#151;/g, '—')
+    .replace(/&#133;/g, '…');
+};
 
 const renderIcon = (iconType, color) => {
   switch (iconType) {
@@ -51,55 +86,26 @@ const renderIcon = (iconType, color) => {
   }
 }
 
-const CommentsPage = () => {
-  console.log('useCommentsFromCategory');
-  const { data: commentsData, loading, error } = getCommentsFromCategory();
+const CommentsPage = ({ data }) => {
+  // 从GraphQL查询结果中获取数据
+  const categoriesData = data.allWordPressCategory.nodes
+  
+  // 查找Comments分类
+  const commentsCategory = categoriesData.find(cat => 
+    cat.name === 'Comments' || 
+    cat.name === 'comments' ||
+    cat.name.toLowerCase().includes('comments')
+  )
+  
+  const commentsData = commentsCategory?.parsedData || {}
 
-  if (loading) {
-    return (
-      <Layout>
-        <Seo title="Comments" description="Loading..." />
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', fontSize: '1.2rem', color: '#666' }}>
-          Loading comments data...
-        </div>
-      </Layout>
-    );
-  }
-
-  if (error) {
-    return (
-      <Layout>
-        <Seo title="Comments" description="Error loading comments data" />
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', fontSize: '1.2rem', color: '#ec6664' }}>
-          Error loading comments data. Please try again later.
-        </div>
-      </Layout>
-    );
-  }
-
-  // fallback
-  const fallbackData = {
-    title: "Comments & Discussion",
-    subtitle: "Share your thoughts, questions, or suggestions here. Let's connect and discuss!",
-    rules: [
-      "Be respectful and constructive in your comments.",
-      "No spam, self-promotion, or advertising allowed.",
-      "No personal attacks, hate speech, or harassment.",
-      "Stay on topic and keep discussions relevant.",
-      "No inappropriate, offensive, or illegal content.",
-      "Use clear, friendly, and inclusive language."
-    ]
-  };
-
-  const pageData = (
-    commentsData &&
-    typeof commentsData === 'object' &&
-    Array.isArray(commentsData.rules)
-  ) ? commentsData : fallbackData;
+  // 解码标题和副标题
+  const decodedTitle = decodeHtml(commentsData.title || 'Comments & Discussion');
+  const decodedSubtitle = decodeHtml(commentsData.description || 'Share your thoughts, questions, or suggestions here. Let\'s connect and discuss!');
 
   return (
     <Layout>
-      <Seo title={pageData.title} description={pageData.subtitle} />
+      <Seo title={decodedTitle} description={decodedSubtitle} />
       <style dangerouslySetInnerHTML={{ __html: commentsPageStyles }} />
       <div className="comments-page-container">
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
@@ -112,7 +118,7 @@ const CommentsPage = () => {
             backgroundClip: 'text',
             color: 'transparent'
           }}>
-            {pageData.title}
+            {decodedTitle}
           </h1>
           <p style={{
             fontSize: '1.2rem',
@@ -121,7 +127,7 @@ const CommentsPage = () => {
             maxWidth: '600px',
             lineHeight: 1.6
           }}>
-            {pageData.subtitle}
+            {decodedSubtitle}
           </p>
           <div style={{
             height: '6px',
@@ -146,7 +152,7 @@ const CommentsPage = () => {
           color: '#666',
           lineHeight: 1.7
         }}>
-          {(Array.isArray(pageData.rules) ? pageData.rules : []).map((rule, idx) => (
+          {(Array.isArray(commentsData.rules) ? commentsData.rules : []).map((rule, idx) => (
             <li key={idx} style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
               <span style={{
                 display: 'inline-block',
@@ -161,7 +167,7 @@ const CommentsPage = () => {
               }}>
                 {renderIcon(ICONS[idx % ICONS.length], '#fff')}
               </span>
-              {rule}
+              {decodeHtml(rule)}
             </li>
           ))}
         </ul>
@@ -197,4 +203,17 @@ const CommentsPage = () => {
   );
 };
 
-export default CommentsPage; 
+export default CommentsPage
+
+// GraphQL查询
+export const query = graphql`
+  query CommentsPageQuery {
+    allWordPressCategory {
+      nodes {
+        name
+        parsedData
+        description
+      }
+    }
+  }
+` 

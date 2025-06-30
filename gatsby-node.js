@@ -331,13 +331,31 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
   categories.forEach((category) => {
     const nodeId = createNodeId(`wordpress-category-${category.id}`);
     
-    // 调试信息
-    console.log(`Category: ${category.name} (${category.slug})`);
-    console.log(`Description: ${category.description?.substring(0, 100)}...`);
-    
-    const parsedData = parseCategoryData(category.description);
-    if (parsedData) {
-      console.log(`Parsed data for ${category.name}:`, parsedData);
+    // fallbackData for comments category
+    const isComments = category.slug === 'comments';
+    const fallbackData = {
+      title: "Comments & Discussion",
+      description: "Share your thoughts, questions, or suggestions here. Let's connect and discuss!",
+      rules: [
+        "Be respectful and constructive in your comments.",
+        "No spam, self-promotion, or advertising allowed.",
+        "No personal attacks, hate speech, or harassment.",
+        "Stay on topic and keep discussions relevant.",
+        "No inappropriate, offensive, or illegal content.",
+        "Use clear, friendly, and inclusive language."
+      ]
+    };
+    let parsedData = parseCategoryData(category.description);
+    let description = category.description;
+    if (isComments) {
+      // 如果 description 不是有效 JSON 或没有 rules 字段，则兜底 fallbackData
+      if (!parsedData || !Array.isArray(parsedData.rules)) {
+        parsedData = fallbackData;
+      }
+      // 如果 description 为空，则兜底副标题
+      if (!description || !description.trim()) {
+        description = "Share your thoughts, questions, or suggestions here. Let's connect and discuss!";
+      }
     }
     
     createNode({
@@ -350,7 +368,7 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
       wordpressId: category.id,
       name: category.name,
       slug: category.slug,
-      description: category.description,
+      description: description,
       count: category.count,
       // 解析分类描述中的 JSON 数据
       parsedData: parsedData,
