@@ -102,6 +102,26 @@ GATSBY_GISCUS_CATEGORY_ID=your-category-id
 - If not set, the site will use fallback data from `src/data/fallbackData.js`
 - Format: `https://your-site.wordpress.com`
 
+#### Local Testing
+
+For local development and testing, you can also set the environment variable directly in your terminal:
+
+```bash
+# macOS/Linux
+export GATSBY_WORDPRESS_URL=https://your-wordpress-site.wordpress.com
+
+# Windows (Command Prompt)
+set GATSBY_WORDPRESS_URL=https://your-wordpress-site.wordpress.com
+
+# Windows (PowerShell)
+$env:GATSBY_WORDPRESS_URL="https://your-wordpress-site.wordpress.com"
+
+# Then start the development server
+npm run develop
+```
+
+This allows you to test with different WordPress configurations without modifying the `.env` file.
+
 ### Giscus Configuration
 
 1. Go to [Giscus](https://giscus.app/)
