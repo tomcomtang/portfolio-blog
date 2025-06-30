@@ -13,7 +13,7 @@
   subtitle: "A comprehensive guide to building fast websites with Gatsby",
   tags: ["Gatsby", "React", "Web Development"],
   readTime: "8 min read",
-  date: "2024-01-15",
+  date: "2025-01-15",
   excerpt: "Learn how to build blazing fast websites with Gatsby...",
   slug: "getting-started-with-gatsby"
 }

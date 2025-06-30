@@ -438,7 +438,7 @@ export const getContactPageConfig = async () => {
         instagram: meta.social_instagram || '',
       },
       footer: {
-        text: meta.footer_text || '© 2024 All rights reserved.',
+        text: meta.footer_text || '© 2025 All rights reserved.',
       }
     };
   } catch (error) {

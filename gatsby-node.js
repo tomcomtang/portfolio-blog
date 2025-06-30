@@ -14,7 +14,7 @@ const postDetails = {
     authorAvatar: "https://avatars.githubusercontent.com/u/20943608?v=4",
     tags: ["Gatsby", "React", "Web Development"],
     readTime: "8 min read",
-    date: "2024-01-15",
+    date: "2025-01-15",
     excerpt: "Learn how to build blazing fast websites with Gatsby, React, and GraphQL. This guide covers everything from setup to deployment.",
     content: `
       <h2>Introduction</h2>
@@ -78,7 +78,7 @@ gatsby develop</code></pre>
     authorAvatar: "https://avatars.githubusercontent.com/u/20943608?v=4",
     tags: ["CSS", "Frontend", "Design"],
     readTime: "12 min read",
-    date: "2024-01-15",
+    date: "2025-01-15",
     excerpt: "Explore advanced CSS techniques including Flexbox, CSS Grid, and CSS Custom Properties to create modern, responsive layouts.",
     content: `
       <h2>Modern CSS Landscape</h2>

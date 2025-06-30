@@ -115,7 +115,7 @@ export const siteSettingsData = {
     email: "tom@example.com",
     phone: "+1 234 567 8900",
     address: "San Francisco, CA",
-    copyright: "© 2024 Tom Tang. All rights reserved."
+    copyright: "© 2025 Tom Tang. All rights reserved."
   },
   navigation: {
     main_menu: [
@@ -147,7 +147,7 @@ export const postsData = [
     subtitle: "A comprehensive guide to building fast websites with Gatsby",
     tags: ["Gatsby", "React", "Web Development"],
     readTime: "8 min read",
-    date: "2024-01-15",
+    date: "2025-01-15",
     excerpt: "Learn how to build blazing fast websites with Gatsby, React, and GraphQL. This guide covers everything from setup to deployment.",
     slug: "getting-started-with-gatsby"
   },
@@ -157,7 +157,7 @@ export const postsData = [
     subtitle: "Master modern CSS with Flexbox, Grid, and Custom Properties",
     tags: ["CSS", "Frontend", "Design"],
     readTime: "12 min read",
-    date: "2024-01-15",
+    date: "2025-01-15",
     excerpt: "Explore advanced CSS techniques including Flexbox, CSS Grid, and CSS Custom Properties to create modern, responsive layouts.",
     slug: "advanced-css-techniques"
   },
@@ -167,7 +167,7 @@ export const postsData = [
     subtitle: "Tips and tricks to make your JavaScript code faster",
     tags: ["JavaScript", "Performance", "Web Development"],
     readTime: "15 min read",
-    date: "2024-01-10",
+    date: "2025-01-10",
     excerpt: "Discover proven techniques to optimize your JavaScript code for better performance and user experience.",
     slug: "javascript-performance-optimization"
   },
@@ -177,7 +177,7 @@ export const postsData = [
     subtitle: "Understanding useState, useEffect, and custom hooks",
     tags: ["React", "JavaScript", "Frontend"],
     readTime: "10 min read",
-    date: "2024-01-10",
+    date: "2025-01-10",
     excerpt: "A deep dive into React Hooks, covering useState, useEffect, and how to create custom hooks for reusable logic.",
     slug: "react-hooks-deep-dive"
   },
@@ -187,7 +187,7 @@ export const postsData = [
     subtitle: "Technical SEO strategies for better search rankings",
     tags: ["SEO", "Web Development", "Marketing"],
     readTime: "14 min read",
-    date: "2024-01-10",
+    date: "2025-01-10",
     excerpt: "Learn technical SEO strategies that developers can implement to improve search engine rankings and user experience.",
     slug: "seo-best-practices-for-developers"
   },
@@ -197,7 +197,7 @@ export const postsData = [
     subtitle: "Create robust APIs using Express.js and MongoDB",
     tags: ["Node.js", "API", "Backend"],
     readTime: "18 min read",
-    date: "2024-01-05",
+    date: "2025-01-05",
     excerpt: "Step-by-step guide to building RESTful APIs with Node.js, Express.js, and MongoDB with best practices and security considerations.",
     slug: "building-rest-apis-with-nodejs"
   },
@@ -207,7 +207,7 @@ export const postsData = [
     subtitle: "Adding type safety to your React applications",
     tags: ["TypeScript", "React", "Frontend"],
     readTime: "11 min read",
-    date: "2024-01-05",
+    date: "2025-01-05",
     excerpt: "Learn how to integrate TypeScript with React to build more robust and maintainable applications.",
     slug: "typescript-for-react-developers"
   },
@@ -217,7 +217,7 @@ export const postsData = [
     subtitle: "ES6+ features every developer should know",
     tags: ["JavaScript", "ES6", "Frontend"],
     readTime: "9 min read",
-    date: "2023-12-28",
+    date: "2024-12-28",
     excerpt: "Explore modern JavaScript features including arrow functions, destructuring, and async/await.",
     slug: "modern-javascript-features"
   }

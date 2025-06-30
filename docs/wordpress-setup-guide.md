@@ -369,7 +369,7 @@ GET /wp-json/wp/v2/posts/{id}?_embed
   "subtitle": "文章副标题",
   "excerpt": "文章摘要",
   "content": "文章内容",
-  "date": "2024-01-15T10:00:00",
+  "date": "2025-01-15T10:00:00",
   "slug": "article-slug",
   "tags": ["JavaScript", "React"],
   "readTime": "8 min read",
