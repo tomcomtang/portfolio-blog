@@ -70,7 +70,7 @@ const HeroSection = () => {
   const socialMediaForHome = Array.isArray(socialMediaData.socials)
     ? socialMediaData.socials.filter(item => item.type === 'social')
     : [];
-
+  console.log('socialMediaForHome:', socialMediaForHome);
   // 如果没有数据，显示加载状态
   if (!heroData) {
     return <div>Loading hero data...</div>;
@@ -111,8 +111,8 @@ const HeroSection = () => {
 
   // Hero内容的动画样式
   const heroContentStyle = {
-    opacity: heroData && heroData.basic ? 1 : 0,
-    transform: heroData && heroData.basic ? 'translateY(0)' : 'translateY(20px)',
+    opacity: heroData ? 1 : 0,
+    transform: heroData ? 'translateY(0)' : 'translateY(20px)',
     transition: 'opacity 1.2s ease-out, transform 1.2s ease-out'
   };
 

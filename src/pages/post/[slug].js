@@ -1,14 +1,6 @@
 import * as React from "react"
-import { useState, useEffect } from "react"
 import Layout from "../../components/layout"
 import Seo from "../../components/seo"
-import { getPostsWithWordPressTags } from "../../services/wordpressApi"
-
-const getSlugFromUrl = () => {
-  if (typeof window === "undefined") return undefined;
-  const match = window.location.pathname.match(/\/post\/([^/]+)\/?$/);
-  return match ? match[1] : undefined;
-};
 
 const getReadTime = (html) => {
   // 简单估算：每分钟200字
@@ -19,55 +11,19 @@ const getReadTime = (html) => {
   return `${min} min read`;
 };
 
-const PostPage = () => {
-  const [slug, setSlug] = useState(undefined);
-  const [post, setPost] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+const PostPage = ({ pageContext }) => {
+  const { post } = pageContext;
 
-  // 只在客户端获取slug
-  useEffect(() => {
-    setSlug(getSlugFromUrl());
-    // 监听路由变化（如有必要）
-    const onPopState = () => setSlug(getSlugFromUrl());
-    window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
-  }, []);
-
-  useEffect(() => {
-    if (!slug) return;
-    const fetchPost = async () => {
-      setLoading(true);
-      try {
-        const posts = await getPostsWithWordPressTags();
-        const wpPost = posts.find(p => p.slug === slug);
-        if (wpPost) {
-          setPost(wpPost);
-          setError(null);
-        } else {
-          setError('Post not found');
-        }
-      } catch (err) {
-        setError('Post not found');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPost()
-  }, [slug])
-
-  if (!slug) {
-    return <Layout><div style={{ padding: '4rem', textAlign: 'center' }}>Loading...</div></Layout>
-  }
-  if (loading) {
-    return <Layout><div style={{ padding: '4rem', textAlign: 'center' }}>Loading...</div></Layout>
-  }
-  if (error || !post) {
-    return <Layout><div style={{ padding: '4rem', textAlign: 'center' }}>Post not found</div></Layout>
+  if (!post) {
+    return (
+      <Layout>
+        <div style={{ padding: '4rem', textAlign: 'center' }}>Post not found</div>
+      </Layout>
+    );
   }
 
   // 兜底处理头像和阅读时长
-  const authorAvatar = '/image/20943608.jpeg';
+  const authorAvatar = post.authorAvatar || '/image/20943608.jpeg';
   const readTime = post.readTime || getReadTime(post.content);
 
   return (
