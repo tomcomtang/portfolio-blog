@@ -52,6 +52,49 @@ const parseCategoryData = (description) => {
   }
 };
 
+// 解码HTML实体
+const decodeHtmlEntities = (text) => {
+  if (!text) return '';
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+};
+
+// 简单的HTML解码函数（不依赖DOM）
+const decodeHtml = (html) => {
+  if (!html) return '';
+  return html
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8216;/g, "'")
+    .replace(/&#8220;/g, '"')
+    .replace(/&#8221;/g, '"')
+    .replace(/&#8211;/g, '–')
+    .replace(/&#8212;/g, '—')
+    .replace(/&#8230;/g, '…')
+    .replace(/&#8242;/g, "'")
+    .replace(/&#8243;/g, '"')
+    .replace(/&#8482;/g, '™')
+    .replace(/&#169;/g, '©')
+    .replace(/&#174;/g, '®')
+    .replace(/&#215;/g, '×')
+    .replace(/&#247;/g, '÷')
+    .replace(/&#176;/g, '°')
+    .replace(/&#177;/g, '±')
+    .replace(/&#181;/g, 'µ')
+    .replace(/&#183;/g, '·')
+    .replace(/&#187;/g, '»')
+    .replace(/&#171;/g, '«')
+    .replace(/&#150;/g, '–')
+    .replace(/&#151;/g, '—')
+    .replace(/&#133;/g, '…');
+};
+
 // 文章数据（作为 fallback）
 const postDetails = {
   "getting-started-with-gatsby": {
@@ -268,7 +311,7 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
       },
       // 文章数据
       wordpressId: post.id,
-      title: post.title?.rendered || '',
+      title: decodeHtml(post.title?.rendered || ''),
       content: post.content?.rendered || '',
       excerpt: post.excerpt?.rendered || '',
       slug: post.slug,
@@ -288,6 +331,15 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
   categories.forEach((category) => {
     const nodeId = createNodeId(`wordpress-category-${category.id}`);
     
+    // 调试信息
+    console.log(`Category: ${category.name} (${category.slug})`);
+    console.log(`Description: ${category.description?.substring(0, 100)}...`);
+    
+    const parsedData = parseCategoryData(category.description);
+    if (parsedData) {
+      console.log(`Parsed data for ${category.name}:`, parsedData);
+    }
+    
     createNode({
       id: nodeId,
       internal: {
@@ -301,7 +353,7 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
       description: category.description,
       count: category.count,
       // 解析分类描述中的 JSON 数据
-      parsedData: parseCategoryData(category.description),
+      parsedData: parsedData,
     });
   });
   
