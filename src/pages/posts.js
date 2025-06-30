@@ -290,6 +290,8 @@ const PostsPage = ({ data }) => {
                           background: isExpanded ? 'rgba(118,207,197,0.06)' : 'none',
                           borderRadius: isExpanded ? '12px 12px 0 0' : 0,
                         }}
+                        onMouseEnter={e => setHoveredRow(post.wordpressId)}
+                        onMouseLeave={e => setHoveredRow(null)}
                         >
                           {/* 标题列（带柳条装饰） */}
                           <div style={{
@@ -298,6 +300,9 @@ const PostsPage = ({ data }) => {
                             alignItems: 'center',
                             minWidth: 0,
                             padding: '1.5rem 1rem',
+                            background: hoveredRow === post.wordpressId ? 'rgba(118,207,197,0.08)' : 'transparent',
+                            borderRadius: '8px',
+                            transition: 'background 0.3s ease',
                           }}>
                             <div style={{ 
                               width: '40px', 
@@ -371,6 +376,9 @@ const PostsPage = ({ data }) => {
                             minWidth: '150px',
                             flexWrap: 'wrap',
                             rowGap: '0.3rem',
+                            background: hoveredRow === post.wordpressId ? 'rgba(118,207,197,0.08)' : 'transparent',
+                            borderRadius: '8px',
+                            transition: 'background 0.3s ease',
                           }}>
                             {post.tags && post.tags.length > 0 && (
                               <div style={{
@@ -404,6 +412,9 @@ const PostsPage = ({ data }) => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             padding: '1.5rem 1rem',
+                            background: hoveredRow === post.wordpressId ? 'rgba(118,207,197,0.08)' : 'transparent',
+                            borderRadius: '8px',
+                            transition: 'background 0.3s ease',
                           }}>
                             <button
                               onClick={e => {
@@ -419,6 +430,8 @@ const PostsPage = ({ data }) => {
                                 transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
                                 transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
                                 outline: 'none',
+                                opacity: isExpanded ? 1 : (hoveredRow === post.wordpressId ? 1 : 0),
+                                visibility: isExpanded ? 'visible' : (hoveredRow === post.wordpressId ? 'visible' : 'hidden'),
                               }}
                               onMouseEnter={e => {
                                 e.currentTarget.style.color = '#ffb400';
