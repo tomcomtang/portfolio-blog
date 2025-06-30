@@ -64,10 +64,12 @@ const HeroSection = () => {
   `);
 
   const heroData = data.heroCategory?.nodes[0]?.parsedData || null;
-  const socialMediaData = data.socialsCategory?.nodes[0]?.parsedData || [];
+  const socialMediaData = data.socialsCategory?.nodes[0]?.parsedData || {};
 
-  // 过滤出 type 为 'social' 的社交媒体数据，用于首页显示
-  const socialMediaForHome = socialMediaData ? socialMediaData.filter(item => item.type === 'social') : []
+  // 适配对象结构：只取 social 字段数组
+  const socialMediaForHome = Array.isArray(socialMediaData.socials)
+    ? socialMediaData.socials.filter(item => item.type === 'social')
+    : [];
 
   // 如果没有数据，显示加载状态
   if (!heroData) {

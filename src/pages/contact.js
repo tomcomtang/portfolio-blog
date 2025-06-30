@@ -2,7 +2,7 @@ import * as React from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 import { contactPageStyles } from "../styles/contactStyles"
-import { useSocialMediaFromCategory, useContactFromCategory } from "../hooks/useWordPress"
+import { graphql, useStaticQuery } from "gatsby"
 
 // 渲染图标的辅助函数 - 使用 img 标签加载 SVG 文件
 const renderIcon = (iconType, socialMediaData) => {
@@ -54,23 +54,32 @@ const renderSocialIcon = (iconType, socialMediaData) => {
 }
 
 const ContactPage = () => {
-  // 用于记录已使用的颜色，避免相邻图标使用相同颜色
   const usedColors = React.useRef(new Set())
 
-  // 从WordPress API获取contact页面数据
-  const { data: contactData, loading: contactLoading, error: contactError } = useContactFromCategory()
-  console.log(contactData)
-  // 从WordPress API获取社交媒体数据
-  const { socialMedia, loading: socialMediaLoading, error: socialMediaError } = useSocialMediaFromCategory()
-  
-  // 过滤出 type 为 'contact' 的社交媒体数据（用于联系信息图标）
-  const contactSocialMedia = socialMedia ? socialMedia.filter(item => item.type === 'contact') : []
-  
-  // 过滤出 type 为 'social' 的社交媒体数据（用于 Follow Me 区域）
-  const socialMediaForFollow = socialMedia ? socialMedia.filter(item => item.type === 'social') : []
+  // 用GraphQL静态查询替换hook
+  const data = useStaticQuery(graphql`
+    query ContactStaticDataQuery {
+      allWordPressCategory {
+        nodes {
+          slug
+          parsedData
+        }
+      }
+    }
+  `)
 
-  // 如果正在加载数据或没有数据，显示空白
-  if (contactLoading || socialMediaLoading || !contactData) {
+  // contact页面主内容
+  const contactCategory = data.allWordPressCategory.nodes.find(cat => cat.slug === 'contact')
+  const contactData = contactCategory?.parsedData || {}
+  // 社交媒体数据（适配为对象结构）
+  const socialsCategory = data.allWordPressCategory.nodes.find(cat => cat.slug === 'socials')
+  const socialMediaObj = socialsCategory?.parsedData || {}
+  // 过滤出 type 为 'contact' 的社交媒体数据（用于联系信息图标）
+  const contactSocialMedia = Array.isArray(socialMediaObj.socials) ? socialMediaObj.socials.filter(item => item.type === 'contact') : []
+  // 过滤出 type 为 'social' 的社交媒体数据（用于 Follow Me 区域）
+  const socialMediaForFollow = Array.isArray(socialMediaObj.socials) ? socialMediaObj.socials.filter(item => item.type === 'social') : []
+
+  if (!contactData) {
     return (
       <Layout>
         <Seo 
@@ -80,9 +89,6 @@ const ContactPage = () => {
       </Layout>
     )
   }
-
-  // 使用API数据
-  const pageConfig = contactData
 
   const getRandomColor = () => {
     const gradients = [
@@ -119,8 +125,8 @@ const ContactPage = () => {
   return (
     <Layout>
       <Seo 
-        title={pageConfig.title} 
-        description={pageConfig.description}
+        title={contactData.title} 
+        description={contactData.description}
       />
       
       <style dangerouslySetInnerHTML={{
@@ -149,7 +155,7 @@ const ContactPage = () => {
             backgroundClip: 'text',
             color: 'transparent'
           }}>
-            {pageConfig.title}
+            {contactData.title}
           </h1>
           <p className="contact-subtitle" style={{ 
             fontSize: '1.2rem', 
@@ -158,7 +164,7 @@ const ContactPage = () => {
             maxWidth: '600px',
             lineHeight: 1.6
           }}>
-            {pageConfig.description}
+            {contactData.description}
           </p>
         </div>
 
@@ -361,10 +367,10 @@ const ContactPage = () => {
           width: '100%'
         }}>
           <p style={{ marginBottom: '1rem' }}>
-            {pageConfig.bottom_info.response_time}
+            {contactData.bottom_info.response_time}
           </p>
           <p>
-            {pageConfig.bottom_info.closing_message}
+            {contactData.bottom_info.closing_message}
           </p>
         </div>
       </div>
