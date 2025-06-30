@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Link } from "gatsby"
-import { useHeroFromCategory, useSocialMediaFromCategory } from '../hooks/useWordPress'
+import { useStaticQuery, graphql } from "gatsby"
 import { heroStyles } from '../styles/homeStyles'
 
 // 鼠标悬停事件处理函数
@@ -47,9 +47,65 @@ function handleAvatarMouseOut(e) {
 }
 
 const HeroSection = () => {
-  const { heroData, loading: heroLoading, error: heroError } = useHeroFromCategory()
-  const { socialMedia, loading: socialMediaLoading, error: socialMediaError } = useSocialMediaFromCategory()
-  const socialMediaForHome = socialMedia ? socialMedia.filter(item => item.type === 'social') : []
+  // 使用 GraphQL 查询获取预取的 WordPress 数据
+  const data = useStaticQuery(graphql`
+    query HeroData {
+      heroCategory: allWordPressCategory(filter: { slug: { eq: "hero" } }) {
+        nodes {
+          parsedData
+        }
+      }
+      socialsCategory: allWordPressCategory(filter: { slug: { eq: "socials" } }) {
+        nodes {
+          parsedData
+        }
+      }
+    }
+  `);
+
+  const heroData = data.heroCategory?.nodes[0]?.parsedData || null;
+  const socialMediaData = data.socialsCategory?.nodes[0]?.parsedData || [];
+
+  // 过滤出 type 为 'social' 的社交媒体数据，用于首页显示
+  const socialMediaForHome = socialMediaData ? socialMediaData.filter(item => item.type === 'social') : []
+
+  // 如果没有数据，显示加载状态
+  if (!heroData) {
+    return <div>Loading hero data...</div>;
+  }
+
+  // 适配不同的数据结构
+  let basic, buttons;
+  
+  if (heroData.basic) {
+    // 如果是标准格式
+    basic = heroData.basic;
+    buttons = heroData.buttons;
+  } else if (heroData.title) {
+    // 如果是 WordPress 解析的格式
+    basic = {
+      title: heroData.title || "Welcome",
+      name: heroData.name || heroData.title || "Developer",
+      description: heroData.description || heroData.content || "A passionate web developer",
+      avatar: heroData.avatar || "https://avatars.githubusercontent.com/u/20943608?v=4"
+    };
+    buttons = heroData.buttons || [
+      { text: "View Posts", link: "/posts", type: "primary" },
+      { text: "Contact Me", link: "/contact", type: "secondary" }
+    ];
+  } else {
+    // 默认数据
+    basic = {
+      title: "Welcome",
+      name: "Developer",
+      description: "A passionate web developer",
+      avatar: "https://avatars.githubusercontent.com/u/20943608?v=4"
+    };
+    buttons = [
+      { text: "View Posts", link: "/posts", type: "primary" },
+      { text: "Contact Me", link: "/contact", type: "secondary" }
+    ];
+  }
 
   // Hero内容的动画样式
   const heroContentStyle = {
@@ -81,17 +137,6 @@ const HeroSection = () => {
     transform: socialMediaForHome && socialMediaForHome.length > 0 ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.8)',
     transition: `opacity 1s ease-out ${index * 0.15}s, transform 1s ease-out ${index * 0.15}s`
   });
-
-  if (heroLoading || socialMediaLoading) {
-    return <div>Loading...</div>;
-  }
-  if (heroError) {
-    return <div>Error loading hero data: {heroError.message || heroError.toString()}</div>;
-  }
-  if (!heroData || !heroData.basic) {
-    return <div>No hero data available.</div>;
-  }
-  const { basic, buttons } = heroData;
 
   return (
     <div style={heroStyles.heroSection}>

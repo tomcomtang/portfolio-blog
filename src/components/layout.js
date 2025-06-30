@@ -9,7 +9,6 @@ import * as React from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import { motion, AnimatePresence } from "framer-motion"
 import { useLocation } from "@reach/router"
-import { useFooterFromCategory } from '../hooks/useWordPress'
 
 import Header from "./header"
 import "./layout.css"
@@ -22,11 +21,17 @@ const Layout = ({ children }) => {
           title
         }
       }
+      # Footer 数据
+      footerCategory: allWordPressCategory(filter: { slug: { eq: "footer" } }) {
+        nodes {
+          parsedData
+        }
+      }
     }
   `)
 
   const location = useLocation()
-  const { footerData, loading: footerLoading, error: footerError } = useFooterFromCategory();
+  const footerData = data.footerCategory?.nodes[0]?.parsedData || null;
 
   return (
     <div
@@ -107,8 +112,8 @@ const Layout = ({ children }) => {
             height: '100%',
             gap: '0.5rem',
           }}>
-            {footerError && <span style={{ color: 'red' }}>Footer加载失败</span>}
-            {!footerLoading && !footerError && footerData && (
+            {!footerData && <span style={{ color: 'red' }}>Footer加载失败</span>}
+            {footerData && (
               <>
                 {footerData.text}
                 {footerData.links && footerData.links.length > 0 && (

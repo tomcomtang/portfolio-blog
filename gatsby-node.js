@@ -4,7 +4,55 @@
  * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-node/
  */
 
-// 文章数据
+// WordPress API 配置
+const WORDPRESS_URL = process.env.GATSBY_WORDPRESS_URL || 'https://tomchild5.wordpress.com'
+
+// WordPress API 数据获取函数
+const fetchWordPressData = async () => {
+  try {
+    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
+    
+    // 并行获取所有数据
+    const [
+      postsResponse,
+      categoriesResponse,
+      pagesResponse
+    ] = await Promise.all([
+      fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/posts?_embed&per_page=100`),
+      fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`),
+      fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/pages?_embed&per_page=50`)
+    ]);
+
+    const posts = await postsResponse.json();
+    const categories = await categoriesResponse.json();
+    const pages = await pagesResponse.json();
+
+    return {
+      posts,
+      categories,
+      pages,
+      siteName
+    };
+  } catch (error) {
+    console.error('Error fetching WordPress data:', error);
+    return null;
+  }
+};
+
+// 解析分类描述中的 JSON 数据
+const parseCategoryData = (description) => {
+  if (!description) return null;
+  try {
+    // 直接用 eval 解析 description，兼容对象和数组
+    return eval('(' + description + ')');
+  } catch (e) {
+    console.log('Error parsing category data with eval:', e.message);
+    console.log('Description:', description.substring(0, 100));
+    return null;
+  }
+};
+
+// 文章数据（作为 fallback）
 const postDetails = {
   "getting-started-with-gatsby": {
     id: 1,
@@ -189,28 +237,241 @@ gatsby develop</code></pre>
 }
 
 /**
+ * @type {import('gatsby').GatsbyNode['sourceNodes']}
+ */
+exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => {
+  const { createNode } = actions;
+  
+  console.log('🔄 Fetching WordPress data...');
+  
+  // 获取 WordPress 数据
+  const wpData = await fetchWordPressData();
+  
+  if (!wpData) {
+    console.log('⚠️  WordPress data fetch failed, using fallback data');
+    return;
+  }
+  
+  const { posts, categories, pages, siteName } = wpData;
+  
+  console.log(`✅ Fetched ${posts.length} posts, ${categories.length} categories, ${pages.length} pages`);
+  
+  // 创建 WordPress 文章节点
+  posts.forEach((post, index) => {
+    const nodeId = createNodeId(`wordpress-post-${post.id}`);
+    
+    createNode({
+      id: nodeId,
+      internal: {
+        type: 'WordPressPost',
+        contentDigest: createContentDigest(post),
+      },
+      // 文章数据
+      wordpressId: post.id,
+      title: post.title?.rendered || '',
+      content: post.content?.rendered || '',
+      excerpt: post.excerpt?.rendered || '',
+      slug: post.slug,
+      date: post.date,
+      modified: post.modified,
+      author: post._embedded?.author?.[0]?.name || 'Unknown',
+      authorAvatar: post._embedded?.author?.[0]?.avatar_urls?.['96'] || '',
+      featuredImage: post.jetpack_featured_media_url || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+      categories: post._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || [],
+      tags: post._embedded?.['wp:term']?.[1]?.map(tag => tag.name) || [],
+      // 计算阅读时间（基于内容长度）
+      readTime: Math.ceil((post.content?.rendered?.length || 0) / 1000) + ' min read',
+    });
+  });
+  
+  // 创建 WordPress 分类节点
+  categories.forEach((category) => {
+    const nodeId = createNodeId(`wordpress-category-${category.id}`);
+    
+    createNode({
+      id: nodeId,
+      internal: {
+        type: 'WordPressCategory',
+        contentDigest: createContentDigest(category),
+      },
+      // 分类数据
+      wordpressId: category.id,
+      name: category.name,
+      slug: category.slug,
+      description: category.description,
+      count: category.count,
+      // 解析分类描述中的 JSON 数据
+      parsedData: parseCategoryData(category.description),
+    });
+  });
+  
+  // 创建 WordPress 页面节点
+  pages.forEach((page) => {
+    const nodeId = createNodeId(`wordpress-page-${page.id}`);
+    
+    createNode({
+      id: nodeId,
+      internal: {
+        type: 'WordPressPage',
+        contentDigest: createContentDigest(page),
+      },
+      // 页面数据
+      wordpressId: page.id,
+      title: page.title?.rendered || '',
+      content: page.content?.rendered || '',
+      excerpt: page.excerpt?.rendered || '',
+      slug: page.slug,
+      date: page.date,
+      modified: page.modified,
+      featuredImage: page.jetpack_featured_media_url || page._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+    });
+  });
+  
+  // 创建站点配置节点
+  const siteConfigNodeId = createNodeId('wordpress-site-config');
+  createNode({
+    id: siteConfigNodeId,
+    internal: {
+      type: 'WordPressSiteConfig',
+      contentDigest: createContentDigest(siteName),
+    },
+    siteName,
+    wordpressUrl: WORDPRESS_URL,
+  });
+  
+  console.log('✅ WordPress data nodes created successfully');
+};
+
+/**
  * @type {import('gatsby').GatsbyNode['createPages']}
  */
-exports.createPages = async ({ actions }) => {
-  const { createPage } = actions
+exports.createPages = async ({ actions, graphql }) => {
+  const { createPage } = actions;
   
-  // 为每篇文章创建页面
-  Object.keys(postDetails).forEach(slug => {
+  console.log('🔄 Creating pages from WordPress data...');
+  
+  // 查询 WordPress 文章数据
+  const result = await graphql(`
+    query {
+      allWordPressPost {
+        nodes {
+          wordpressId
+          title
+          slug
+          excerpt
+          content
+          date
+          author
+          authorAvatar
+          featuredImage
+          categories
+          tags
+          readTime
+        }
+      }
+    }
+  `);
+  
+  if (result.errors) {
+    console.error('GraphQL query error:', result.errors);
+    // 如果查询失败，使用 fallback 数据
+    Object.keys(postDetails).forEach(slug => {
+      createPage({
+        path: `/post/${slug}`,
+        component: require.resolve("./src/pages/post/[slug].js"),
+        context: {
+          slug: slug,
+          post: postDetails[slug]
+        },
+      });
+    });
+    return;
+  }
+  
+  const posts = result.data.allWordPressPost.nodes;
+  
+  // 为每篇 WordPress 文章创建页面
+  posts.forEach(post => {
     createPage({
-      path: `/post/${slug}`,
+      path: `/post/${post.slug}`,
       component: require.resolve("./src/pages/post/[slug].js"),
       context: {
-        slug: slug,
-        post: postDetails[slug]
+        slug: post.slug,
+        post: {
+          id: post.wordpressId,
+          title: post.title,
+          subtitle: post.title, // 可以后续从 WordPress 自定义字段获取
+          author: post.author,
+          authorAvatar: post.authorAvatar,
+          tags: post.tags,
+          readTime: post.readTime,
+          date: post.date,
+          excerpt: post.excerpt,
+          content: post.content,
+        }
       },
-    })
-  })
-
+    });
+  });
+  
+  console.log(`✅ Created ${posts.length} post pages`);
+  
   // 保留原有的DSG页面
   createPage({
     path: "/using-dsg",
     component: require.resolve("./src/templates/using-dsg.js"),
     context: {},
     defer: true,
-  })
-}
+  });
+};
+
+/**
+ * @type {import('gatsby').GatsbyNode['createSchemaCustomization']}
+ */
+exports.createSchemaCustomization = ({ actions }) => {
+  const { createTypes } = actions;
+  
+  const typeDefs = `
+    type WordPressPost implements Node {
+      wordpressId: Int!
+      title: String!
+      content: String!
+      excerpt: String!
+      slug: String!
+      date: Date! @dateformat
+      modified: Date! @dateformat
+      author: String!
+      authorAvatar: String
+      featuredImage: String
+      categories: [String!]!
+      tags: [String!]!
+      readTime: String!
+    }
+    
+    type WordPressCategory implements Node {
+      wordpressId: Int!
+      name: String!
+      slug: String!
+      description: String!
+      count: Int!
+      parsedData: JSON
+    }
+    
+    type WordPressPage implements Node {
+      wordpressId: Int!
+      title: String!
+      content: String!
+      excerpt: String!
+      slug: String!
+      date: Date! @dateformat
+      modified: Date! @dateformat
+      featuredImage: String
+    }
+    
+    type WordPressSiteConfig implements Node {
+      siteName: String!
+      wordpressUrl: String!
+    }
+  `;
+  
+  createTypes(typeDefs);
+};

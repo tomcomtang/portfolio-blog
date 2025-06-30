@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useEffect, useRef, useState } from "react"
-import { useAboutFromCategory, useProjectsFromCategory, useSkillsFromCategory } from '../hooks/useWordPress'
-import { aboutData as defaultAboutData } from '../data/mockData'
+import { useStaticQuery, graphql } from "gatsby"
 import { aboutStyles } from '../styles/homeStyles'
 
 const AboutMe = () => {
@@ -10,10 +9,30 @@ const AboutMe = () => {
   const [cardVisible, setCardVisible] = useState(false)
   const [hoveredProject, setHoveredProject] = useState(null)
 
-  // 获取数据
-  const { aboutData, loading: aboutLoading, error: aboutError } = useAboutFromCategory()
-  const { data: projects, loading: projectsLoading, error: projectsError } = useProjectsFromCategory()
-  const { data: skills, loading: skillsLoading, error: skillsError } = useSkillsFromCategory()
+  // 使用 GraphQL 查询获取预取的 WordPress 数据
+  const data = useStaticQuery(graphql`
+    query AboutMeData {
+      aboutCategory: allWordPressCategory(filter: { slug: { eq: "about" } }) {
+        nodes {
+          parsedData
+        }
+      }
+      projectsCategory: allWordPressCategory(filter: { slug: { eq: "projects" } }) {
+        nodes {
+          parsedData
+        }
+      }
+      skillsCategory: allWordPressCategory(filter: { slug: { eq: "skills" } }) {
+        nodes {
+          parsedData
+        }
+      }
+    }
+  `);
+
+  const aboutData = data.aboutCategory?.nodes[0]?.parsedData || null;
+  const projectsData = data.projectsCategory?.nodes[0]?.parsedData || [];
+  const skillsData = data.skillsCategory?.nodes[0]?.parsedData || [];
 
   // 延迟显示卡片，避免布局计算导致的闪现
   useEffect(() => {
@@ -23,27 +42,48 @@ const AboutMe = () => {
     return () => clearTimeout(timer)
   }, [])
 
-  // 调试：打印接口返回的 skills 和 projects 数据
-  useEffect(() => {
-    
-  }, [projects, skills])
-
-  // 如果正在加载，显示加载状态
-  if (aboutLoading || skillsLoading || projectsLoading) {
-    return null;
+  // 适配 about 数据
+  let about;
+  if (aboutData && aboutData.title) {
+    about = {
+      title: aboutData.title,
+      content: aboutData.content || aboutData.description || "About me content"
+    };
+  } else if (aboutData && aboutData.basic) {
+    about = {
+      title: aboutData.basic.title || "About Me",
+      content: aboutData.basic.description || "About me content"
+    };
+  } else {
+    about = {
+      title: "About Me",
+      content: "A passionate web developer and blogger."
+    };
   }
 
-  // 没有API数据时不渲染内容
-  if (!aboutData || !aboutData.title) {
-    return null;
+  // 适配项目数据
+  let displayProjects = [];
+  if (projectsData && Array.isArray(projectsData)) {
+    displayProjects = projectsData.slice(0, 3).map(project => ({
+      title: project.title || project.name || "Project",
+      description: project.description || project.content || project.excerpt?.rendered || "Project description",
+      svg: project.svg || project.image || "/static/image/project1.svg",
+      technologies: project.technologies || project.tags || [],
+      link: project.link || project.live_url || "#",
+      github: project.github || project.github_url || "#"
+    }));
   }
 
-  // 获取数据，如果没有则使用默认值
-  const about = aboutData || defaultAboutData
-
-  // 只用接口数据，不再 fallback 到 mockData
-  const displayProjects = projects && projects.length > 0 ? projects.slice(0, 3) : []
-  const displaySkills = skills && skills.length > 0 ? skills : []
+  // 适配技能数据
+  let displaySkills = [];
+  if (skillsData && Array.isArray(skillsData)) {
+    displaySkills = skillsData.map(skill => ({
+      name: skill.name || skill.title || "Skill",
+      percentage: skill.percentage || 80,
+      color: skill.color || "#76cfc5",
+      icon: skill.icon || "S"
+    }));
+  }
 
   // 将技能数据分成两列
   const leftSkills = displaySkills.filter((_, index) => index % 2 === 0)
@@ -66,8 +106,8 @@ const AboutMe = () => {
     <>
       <div style={aboutStyles.aboutSection}>
         <div style={aboutStyles.aboutContent}>
-          <h2 style={aboutStyles.aboutTitle}>{aboutData.title}</h2>
-          <p style={aboutStyles.aboutText}>{aboutData.content}</p>
+          <h2 style={aboutStyles.aboutTitle}>{about.title}</h2>
+          <p style={aboutStyles.aboutText}>{about.content}</p>
         </div>
       </div>
       <div style={dynamicNewSection}></div>
