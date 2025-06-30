@@ -29,45 +29,83 @@ const Layout = ({ children }) => {
   const { footerData, loading: footerLoading, error: footerError } = useFooterFromCategory();
 
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        width: '100%',
+        background: '#fafdff',
+      }}
+    >
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
-      <div
-        style={
-          location.pathname === '/'
-            ? { margin: 0, padding: 0, maxWidth: '100%' }
-            : { margin: `0 auto`, maxWidth: `1200px`, padding: `var(--size-gutter)`, paddingTop: `calc(var(--size-gutter) + 60px)` }
-        }
-      >
-        <AnimatePresence mode="wait">
-          <motion.main
-            key={location.pathname}
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
-          >
-            {children}
-          </motion.main>
-        </AnimatePresence>
-        <footer
-          style={{
-            marginTop: `var(--space-5)`,
-            fontSize: `var(--font-sm)`,
-            padding: '0.5rem 0',
-            color: '#000',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'nowrap',
-            gap: '0.5rem 1rem',
-          }}
+      <main style={{ flex: 1 }}>
+        <div
+          style={
+            location.pathname === '/'
+              ? {
+                  maxWidth: '1200px',
+                  margin: '0 auto',
+                  padding: 0,
+                }
+              : {
+                  margin: `0 auto`,
+                  maxWidth: `1200px`,
+                  padding: `var(--size-gutter)`,
+                  paddingTop: `calc(var(--size-gutter) + 60px)`
+                }
+          }
         >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </main>
+      <footer
+        style={{
+          height: '60px',
+          background: '#fff',
+          width: '100vw',
+          display: 'flex',
+          alignItems: 'center',
+          boxShadow: '0 -1px 8px rgba(0,0,0,0.03)',
+          position: 'relative',
+          left: 0,
+        }}
+      >
+        <div style={{
+          width: '100%',
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: '100%',
+          minWidth: 0,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          paddingLeft: '2rem',
+          paddingRight: '2rem',
+        }}>
           <div style={{
             flex: 1,
             minWidth: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            height: '100%',
+            gap: '0.5rem',
           }}>
             {footerError && <span style={{ color: 'red' }}>Footer加载失败</span>}
             {!footerLoading && !footerError && footerData && (
@@ -93,22 +131,26 @@ const Layout = ({ children }) => {
               style={{ 
                 color: '#000', 
                 textDecoration: 'none',
-                borderBottom: '1px solid #000',
                 paddingBottom: '1px',
                 transition: 'all 0.3s ease',
                 whiteSpace: 'nowrap',
                 maxWidth: '100%',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                marginLeft: '1.5rem',
+                paddingRight: '0.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                height: '100%',
               }}
               onMouseEnter={(e) => {
                 e.target.style.color = '#76cfc5';
-                e.target.style.borderBottomColor = '#76cfc5';
+                e.target.style.textDecoration = 'underline';
                 e.target.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={(e) => {
                 e.target.style.color = '#000';
-                e.target.style.borderBottomColor = '#000';
+                e.target.style.textDecoration = 'none';
                 e.target.style.transform = 'translateY(0)';
               }}
               target="_blank"
@@ -117,9 +159,9 @@ const Layout = ({ children }) => {
               {footerData.github.text}
             </a>
           )}
-        </footer>
-      </div>
-    </>
+        </div>
+      </footer>
+    </div>
   )
 }
 
