@@ -103,6 +103,21 @@ const CommentsPage = ({ data }) => {
   const decodedTitle = decodeHtml(commentsData.title || 'Comments & Discussion');
   const decodedSubtitle = decodeHtml(commentsData.description || 'Share your thoughts, questions, or suggestions here. Let\'s connect and discuss!');
 
+  // Giscus 配置 - 直接用环境变量，带兜底
+  const giscusConfig = {
+    repo: process.env.GATSBY_GISCUS_REPO || "tomcomtang/portfolio-blog",
+    repoId: process.env.GATSBY_GISCUS_REPO_ID || "R_kgDOPBDz5Q",
+    category: "Ideas", // 写死
+    categoryId: process.env.GATSBY_GISCUS_CATEGORY_ID || "DIC_kwDOPBDz5c4Cr_AK",
+    mapping: "pathname", // 写死
+    reactionsEnabled: "1", // 写死
+    emitMetadata: "0", // 写死
+    inputPosition: "top", // 写死
+    theme: "noborder_light", // 写死
+    lang: "en", // 写死
+    loading: "lazy" // 写死
+  };
+
   return (
     <Layout>
       <Seo title={decodedTitle} description={decodedSubtitle} />
@@ -184,17 +199,17 @@ const CommentsPage = ({ data }) => {
         >
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <Giscus
-              repo="tomcomtang/portfolio-blog"
-              repoId="R_kgDOPBDz5Q"
-              category="Ideas"
-              categoryId="DIC_kwDOPBDz5c4Cr_AK"
-              mapping="pathname"
-              reactionsEnabled="1"
-              emitMetadata="0"
-              inputPosition="top"
-              theme="noborder_light"
-              lang="en"
-              loading="lazy"
+              repo={giscusConfig.repo}
+              repoId={giscusConfig.repoId}
+              category={giscusConfig.category}
+              categoryId={giscusConfig.categoryId}
+              mapping={giscusConfig.mapping}
+              reactionsEnabled={giscusConfig.reactionsEnabled}
+              emitMetadata={giscusConfig.emitMetadata}
+              inputPosition={giscusConfig.inputPosition}
+              theme={giscusConfig.theme}
+              lang={giscusConfig.lang}
+              loading={giscusConfig.loading}
             />
           </div>
         </div>

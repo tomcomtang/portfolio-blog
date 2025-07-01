@@ -207,6 +207,21 @@ const fallbackSiteConfig = {
   wordpressUrl: "https://example.wordpress.com"
 };
 
+// Giscus 配置
+const giscusConfig = {
+  repo: process.env.GATSBY_GISCUS_REPO,
+  repoId: process.env.GATSBY_GISCUS_REPO_ID,
+  category: "Ideas", // 写死
+  categoryId: process.env.GATSBY_GISCUS_CATEGORY_ID,
+  mapping: "pathname", // 写死
+  reactionsEnabled: "1", // 写死
+  emitMetadata: "0", // 写死
+  inputPosition: "top", // 写死
+  theme: "noborder_light", // 写死
+  lang: "en", // 写死
+  loading: "lazy" // 写死
+};
+
 module.exports = {
   fallbackPosts,
   fallbackHero,
@@ -220,5 +235,6 @@ module.exports = {
   fallbackProjects,
   defaultAuthor,
   defaultAuthorAvatar,
-  fallbackSiteConfig
+  fallbackSiteConfig,
+  giscusConfig
 }; 

@@ -4,6 +4,9 @@
  * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/
  */
 
+// Load environment variables from .env file
+require('dotenv').config();
+
 /**
  * @type {import('gatsby').GatsbyConfig}
  */

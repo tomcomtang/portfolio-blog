@@ -51,39 +51,65 @@ const activeMenuLinkStyle = {
   color: '#ec6664',
 }
 
-const Header = ({ siteTitle }) => (
-  <nav style={navStyle}>
-    <Link to="/" style={siteNameStyle} onMouseOver={handleSiteNameMouseOver} onMouseOut={handleSiteNameMouseOut}>
-      {siteTitle || 'My Portfolio Blog'}
-    </Link>
-    <ul style={menuStyle}>
-      <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
-        <Link to="/" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
-          onMouseOver={handleMouseOver}
-          onMouseOut={handleMouseOut}
-        >Home</Link>
-      </li>
-      <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
-        <Link to="/posts" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
-          onMouseOver={handleMouseOver}
-          onMouseOut={handleMouseOut}
-        >Posts</Link>
-      </li>
-      <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
-        <Link to="/comments" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
-          onMouseOver={handleMouseOver}
-          onMouseOut={handleMouseOut}
-        >Comments</Link>
-      </li>
-      <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
-        <Link to="/contact" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
-          onMouseOver={handleMouseOver}
-          onMouseOut={handleMouseOut}
-        >Contact</Link>
-      </li>
-    </ul>
-  </nav>
-)
+const Header = ({ siteTitle }) => {
+  // 检查 Giscus 环境变量是否配置
+  const isGiscusConfigured = typeof window !== 'undefined' && 
+                             process.env.GATSBY_GISCUS_REPO && 
+                             process.env.GATSBY_GISCUS_REPO_ID && 
+                             process.env.GATSBY_GISCUS_CATEGORY_ID;
+
+                             console.log('Giscus config check:', {
+                              repo: process.env.GATSBY_GISCUS_REPO,
+                              repoId: process.env.GATSBY_GISCUS_REPO_ID,
+                              categoryId: process.env.GATSBY_GISCUS_CATEGORY_ID,
+                              isConfigured: isGiscusConfigured
+                            });
+  // 调试信息（开发环境）
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    console.log('Giscus config check:', {
+      repo: process.env.GATSBY_GISCUS_REPO,
+      repoId: process.env.GATSBY_GISCUS_REPO_ID,
+      categoryId: process.env.GATSBY_GISCUS_CATEGORY_ID,
+      isConfigured: isGiscusConfigured
+    });
+  }
+
+  return (
+    <nav style={navStyle}>
+      <Link to="/" style={siteNameStyle} onMouseOver={handleSiteNameMouseOver} onMouseOut={handleSiteNameMouseOut}>
+        {siteTitle || 'My Portfolio Blog'}
+      </Link>
+      <ul style={menuStyle}>
+        <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
+          <Link to="/" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
+            onMouseOver={handleMouseOver}
+            onMouseOut={handleMouseOut}
+          >Home</Link>
+        </li>
+        <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
+          <Link to="/posts" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
+            onMouseOver={handleMouseOver}
+            onMouseOut={handleMouseOut}
+          >Posts</Link>
+        </li>
+        {isGiscusConfigured && (
+          <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
+            <Link to="/comments" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
+              onMouseOver={handleMouseOver}
+              onMouseOut={handleMouseOut}
+            >Comments</Link>
+          </li>
+        )}
+        <li style={{ display: 'flex', alignItems: 'center', height: '100%', marginBottom: 0 }}>
+          <Link to="/contact" style={menuLinkStyle} getProps={({ isCurrent }) => isCurrent ? { style: activeMenuLinkStyle } : {}}
+            onMouseOver={handleMouseOver}
+            onMouseOut={handleMouseOut}
+          >Contact</Link>
+        </li>
+      </ul>
+    </nav>
+  )
+}
 
 function handleMouseOver(e) {
   e.target.style.color = '#ec6664';

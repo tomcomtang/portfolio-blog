@@ -5,7 +5,7 @@
  */
 
 // WordPress API 配置
-const WORDPRESS_URL = process.env.GATSBY_WORDPRESS_URL || 'https://tomchild5.wordpress.com'
+const WORDPRESS_URL = process.env.GATSBY_WORDPRESS_URL; // || 'https://tomchild5.wordpress.com'
 
 // 新增：通过环境变量控制 API 模式
 defaultApiMode = process.env.GATSBY_WORDPRESS_API_MODE || 'default'; // 'default' or 'acf'

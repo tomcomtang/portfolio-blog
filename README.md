@@ -89,10 +89,10 @@ Create a `.env` file in the project root:
 # WordPress Configuration
 GATSBY_WORDPRESS_URL=https://your-wordpress-site.wordpress.com
 
-# Giscus Comments Configuration
+# Giscus Comments Configuration (Optional)
+# If all three Giscus variables are set, the Comments menu will be displayed
 GATSBY_GISCUS_REPO=your-username/your-repo-name
 GATSBY_GISCUS_REPO_ID=your-repo-id
-GATSBY_GISCUS_CATEGORY=Announcements
 GATSBY_GISCUS_CATEGORY_ID=your-category-id
 ```
 
@@ -124,10 +124,18 @@ This allows you to test with different WordPress configurations without modifyin
 
 ### Giscus Configuration
 
+**Optional**: Comments functionality is only enabled when all three Giscus environment variables are configured.
+
 1. Go to [Giscus](https://giscus.app/)
 2. Configure with your GitHub repository
-3. Copy the configuration values to your `.env` file
-4. The comments will appear on blog posts automatically
+3. Copy the configuration values to your `.env` file:
+   - `GATSBY_GISCUS_REPO`: Your repository name (e.g., "username/repo")
+   - `GATSBY_GISCUS_REPO_ID`: Your repository ID
+   - `GATSBY_GISCUS_CATEGORY_ID`: Your category ID
+4. The Comments menu will automatically appear in the navigation when all variables are set
+5. Comments will appear on blog posts and the comments page automatically
+
+**Testing**: Visit `/giscus-test` to verify your Giscus configuration is working correctly.
 
 ## 📝 WordPress Data Structure
 
