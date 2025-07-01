@@ -234,8 +234,8 @@
     address: "San Francisco, CA"
   },
   socialMedia: {
-    github: "https://github.com/tomcomtang",
-    linkedin: "https://linkedin.com/in/tomcomtang"
+    github: "https://github.com/your-username",
+    linkedin: "https://linkedin.com/in/your-username"
   }
 }
 ```
@@ -246,15 +246,15 @@
 
 添加自定义字段：
 
-| 字段名                | 值                                   | 说明          |
-| --------------------- | ------------------------------------ | ------------- |
-| `contact_title`       | "Get In Touch"                       | 页面标题      |
-| `contact_description` | "I'm always open to discussing..."   | 页面描述      |
-| `contact_email`       | "tom@example.com"                    | 联系邮箱      |
-| `contact_phone`       | "+1 234 567 890"                     | 联系电话      |
-| `contact_address`     | "San Francisco, CA"                  | 联系地址      |
-| `social_github`       | "https://github.com/tomcomtang"      | GitHub 链接   |
-| `social_linkedin`     | "https://linkedin.com/in/tomcomtang" | LinkedIn 链接 |
+| 字段名                | 值                                      | 说明          |
+| --------------------- | --------------------------------------- | ------------- |
+| `contact_title`       | "Get In Touch"                          | 页面标题      |
+| `contact_description` | "I'm always open to discussing..."      | 页面描述      |
+| `contact_email`       | "tom@example.com"                       | 联系邮箱      |
+| `contact_phone`       | "+1 234 567 890"                        | 联系电话      |
+| `contact_address`     | "San Francisco, CA"                     | 联系地址      |
+| `social_github`       | "https://github.com/your-username"      | GitHub 链接   |
+| `social_linkedin`     | "https://linkedin.com/in/your-username" | LinkedIn 链接 |
 
 ## 🔧 测试数据获取
 

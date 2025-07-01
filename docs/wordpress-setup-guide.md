@@ -43,8 +43,8 @@ contact_email: 联系邮箱
 contact_phone: 联系电话
 contact_address: 联系地址
 
-social_github: GitHub链接
-social_linkedin: LinkedIn链接
+social_github: "https://github.com/your-username"
+social_linkedin: "https://linkedin.com/in/your-username"
 social_twitter: Twitter链接
 social_instagram: Instagram链接
 

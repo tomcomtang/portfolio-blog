@@ -5,7 +5,7 @@
  */
 
 // WordPress API 配置
-const WORDPRESS_URL = process.env.GATSBY_WORDPRESS_URL; // || 'https://tomchild5.wordpress.com'
+const WORDPRESS_URL = process.env.GATSBY_WORDPRESS_URL;
 
 // 新增：通过环境变量控制 API 模式
 defaultApiMode = process.env.GATSBY_WORDPRESS_API_MODE || 'default'; // 'default' or 'acf'
@@ -413,14 +413,6 @@ exports.createPages = async ({ actions, graphql }) => {
   });
   
   console.log(`✅ Created ${posts.length} post pages`);
-  
-  // 保留原有的DSG页面
-  createPage({
-    path: "/using-dsg",
-    component: require.resolve("./src/templates/using-dsg.js"),
-    context: {},
-    defer: true,
-  });
 };
 
 /**

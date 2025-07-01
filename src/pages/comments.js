@@ -103,12 +103,12 @@ const CommentsPage = ({ data }) => {
   const decodedTitle = decodeHtml(commentsData.title || 'Comments & Discussion');
   const decodedSubtitle = decodeHtml(commentsData.description || 'Share your thoughts, questions, or suggestions here. Let\'s connect and discuss!');
 
-  // Giscus 配置 - 直接用环境变量，带兜底
+  // Giscus 配置 - 直接用环境变量，无默认值
   const giscusConfig = {
-    repo: process.env.GATSBY_GISCUS_REPO || "tomcomtang/portfolio-blog",
-    repoId: process.env.GATSBY_GISCUS_REPO_ID || "R_kgDOPBDz5Q",
+    repo: process.env.GATSBY_GISCUS_REPO,
+    repoId: process.env.GATSBY_GISCUS_REPO_ID,
     category: "Ideas", // 写死
-    categoryId: process.env.GATSBY_GISCUS_CATEGORY_ID || "DIC_kwDOPBDz5c4Cr_AK",
+    categoryId: process.env.GATSBY_GISCUS_CATEGORY_ID,
     mapping: "pathname", // 写死
     reactionsEnabled: "1", // 写死
     emitMetadata: "0", // 写死
