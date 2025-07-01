@@ -131,9 +131,43 @@ This allows you to test with different WordPress configurations without modifyin
 
 ## 📝 WordPress Data Structure
 
-To configure your WordPress site for this template, you need to create categories with specific data structures in their descriptions. Reference `src/data/fallbackData.js` for the exact format.
+To configure your WordPress site for this template, you need to create categories with specific data structures in their descriptions **or use ACF (Advanced Custom Fields) for structured data**. Reference `src/data/fallbackData.js` for the exact format.
 
-### Required WordPress Categories
+### Supported Data Sources
+
+- **ACF Custom Fields**: If you use the ACF plugin (recommended for paid/self-hosted WordPress), create custom fields for your categories or pages. The field structure and content should match the examples in `fallbackData.js`.
+- **Category Description**: For WordPress.com free plans, paste JSON data into the category description field (see below for format).
+
+### ACF Data Structure Example
+
+When using ACF, configure your custom fields to match the fallback data structure. For example, for the hero section:
+
+```json
+{
+  "basic": {
+    "name": "Your Name",
+    "title": "Welcome Message",
+    "description": "Your introduction text",
+    "avatar": "https://your-avatar-url.com"
+  },
+  "buttons": [
+    {
+      "text": "View Posts",
+      "link": "/posts",
+      "type": "primary"
+    },
+    {
+      "text": "Contact Me",
+      "link": "/contact",
+      "type": "secondary"
+    }
+  ]
+}
+```
+
+> **Tip:** Always refer to `src/data/fallbackData.js` for the latest data structure examples. Your ACF field group should use the same keys and nesting as the fallback data.
+
+### Required WordPress Categories (for description-based data)
 
 #### 1. Hero Category (slug: "hero")
 

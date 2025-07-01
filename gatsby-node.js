@@ -7,6 +7,24 @@
 // WordPress API 配置
 const WORDPRESS_URL = process.env.GATSBY_WORDPRESS_URL || 'https://tomchild5.wordpress.com'
 
+// 新增：通过环境变量控制 API 模式
+defaultApiMode = process.env.GATSBY_WORDPRESS_API_MODE || 'default'; // 'default' or 'acf'
+
+// 自动判断API基地址
+const getApiBase = (url) => {
+  if (!url) return null;
+  if (url.includes('wordpress.com')) {
+    // WordPress.com 官方
+    const site = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    return `https://public-api.wordpress.com/wp/v2/sites/${site}`;
+  } else {
+    // 自建 WordPress
+    return `${url.replace(/\/$/, '')}/wp-json/wp/v2`;
+  }
+};
+
+const API_BASE = getApiBase(WORDPRESS_URL);
+
 // 导入统一的兜底数据
 const {
   fallbackPosts,
@@ -24,32 +42,82 @@ const {
   fallbackSiteConfig
 } = require('./src/data/fallbackData');
 
-// WordPress API 数据获取函数
+// WordPress API 数据获取函数（兼容两种模式）
 const fetchWordPressData = async () => {
   try {
-    const siteName = WORDPRESS_URL.replace('https://', '').replace('http://', '').replace('.wordpress.com', '');
-    
-    // 并行获取所有数据
-    const [
-      postsResponse,
-      categoriesResponse,
-      pagesResponse
-    ] = await Promise.all([
-      fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/posts?_embed&per_page=100`),
-      fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/categories`),
-      fetch(`https://public-api.wordpress.com/wp/v2/sites/${siteName}.wordpress.com/pages?_embed&per_page=50`)
-    ]);
-
-    const posts = await postsResponse.json();
-    const categories = await categoriesResponse.json();
-    const pages = await pagesResponse.json();
-
-    return {
-      posts,
-      categories,
-      pages,
-      siteName
-    };
+    if (defaultApiMode === 'acf') {
+      // 付费/自定义 REST 路由模式，分别请求各自路径
+      const [
+        postsResponse,
+        heroResponse,
+        footerResponse,
+        aboutResponse,
+        contactResponse,
+        socialsResponse,
+        commentsResponse,
+        skillsResponse,
+        projectsResponse
+      ] = await Promise.all([
+        fetch(`${API_BASE}/posts?_embed&per_page=100`),
+        fetch(`${API_BASE}/hero`),
+        fetch(`${API_BASE}/footer`),
+        fetch(`${API_BASE}/about`),
+        fetch(`${API_BASE}/contact`),
+        fetch(`${API_BASE}/socials`),
+        fetch(`${API_BASE}/comments`),
+        fetch(`${API_BASE}/skills`),
+        fetch(`${API_BASE}/projects`)
+      ]);
+      const posts = await postsResponse.json();
+      const hero = await heroResponse.json();
+      const footer = await footerResponse.json();
+      const about = await aboutResponse.json();
+      const contact = await contactResponse.json();
+      const socials = await socialsResponse.json();
+      const comments = await commentsResponse.json();
+      const skills = await skillsResponse.json();
+      const projects = await projectsResponse.json();
+      // 组装成 categories 兼容结构
+      const categories = [
+        { slug: 'hero', acf: hero },
+        { slug: 'footer', acf: footer },
+        { slug: 'about', acf: about },
+        { slug: 'contact', acf: contact },
+        { slug: 'socials', acf: socials },
+        { slug: 'comments', acf: comments },
+        { slug: 'skills', acf: skills },
+        { slug: 'projects', acf: projects }
+      ];
+      // pages 依然从 REST API 获取
+      const pagesResponse = await fetch(`${API_BASE}/pages?_embed&per_page=50`);
+      const pages = await pagesResponse.json();
+      return {
+        posts,
+        categories,
+        pages,
+        siteName: WORDPRESS_URL.replace(/^https?:\/\//, '').replace(/\/$/, '')
+      };
+    } else {
+      // 默认模式，兼容免费版，从 categories 获取
+      const [
+        postsResponse,
+        categoriesResponse,
+        pagesResponse
+      ] = await Promise.all([
+        fetch(`${API_BASE}/posts?_embed&per_page=100`),
+        fetch(`${API_BASE}/categories`),
+        fetch(`${API_BASE}/pages?_embed&per_page=50`)
+      ]);
+      const posts = await postsResponse.json();
+      const categories = await categoriesResponse.json();
+      const pages = await pagesResponse.json();
+      return {
+        posts,
+        categories,
+        pages,
+        siteName: WORDPRESS_URL.replace(/^https?:\/\//, '').replace(/\/$/, '')
+      };
+    }
   } catch (error) {
     console.error('Error fetching WordPress data:', error);
     return null;
@@ -171,7 +239,12 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
     const isSkills = category.slug === 'skills';
     const isProjects = category.slug === 'projects';
     
-    let parsedData = parseCategoryData(category.description);
+    let parsedData = null;
+    if (category.acf && Object.keys(category.acf).length > 0) {
+      parsedData = category.acf;
+    } else {
+      parsedData = parseCategoryData(category.description);
+    }
     let description = category.description;
     
     // 为每个分类设置兜底数据
