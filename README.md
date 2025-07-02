@@ -4,7 +4,7 @@ A modern portfolio blog built with Gatsby, featuring static site generation (SSG
 
 ## 🌐 Live Demo
 
-**Preview the project:** [https://portfolio-blog-i46p7a36rd.edgeone.app/](https://portfolio-blog-i46p7a36rd.edgeone.app/)
+**Preview the project:** [https://portfolio-blog.edgeone.app/](https://portfolio-blog.edgeone.app/)
 
 ## 🎯 Project Purpose
 
