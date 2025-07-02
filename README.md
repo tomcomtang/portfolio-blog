@@ -2,6 +2,10 @@
 
 A modern portfolio blog built with Gatsby, featuring static site generation (SSG) with optional WordPress data integration. This project demonstrates how to build a fast, SEO-friendly blog that can work with or without WordPress.
 
+## 🌐 Live Demo
+
+**Preview the project:** [https://portfolio-blog-i46p7a36rd.edgeone.app/](https://portfolio-blog-i46p7a36rd.edgeone.app/)
+
 ## 🎯 Project Purpose
 
 This project serves as a **portfolio blog template** that combines the best of both worlds:
