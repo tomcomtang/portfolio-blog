@@ -1,3 +1,12 @@
+---
+date: 2025-06-24
+read: 5
+cover: "/static/image/call-3613071_640.png"
+title: The Rise of AI-Powered Development Tools in 2025
+author: Someone
+tags: 4276,405217
+---
+
 # The Rise of AI-Powered Development Tools in 2025
 
 ## Introduction

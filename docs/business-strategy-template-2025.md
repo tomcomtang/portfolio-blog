@@ -1,3 +1,12 @@
+---
+date: 2025-06-24
+read: 5
+cover: "/static/image/headphones-1899759_640.png"
+title: Digital Transformation Strategy for 2025
+author: Someone
+tags: 4276,179
+---
+
 # Digital Transformation Strategy for 2025
 
 ## Executive Summary

@@ -47,12 +47,12 @@ const AboutMe = () => {
   if (aboutData && aboutData.title) {
     about = {
       title: aboutData.title,
-      content: aboutData.content || aboutData.description || "About me content"
+      content: aboutData.content || aboutData.description
     };
   } else if (aboutData && aboutData.basic) {
     about = {
-      title: aboutData.basic.title || "About Me",
-      content: aboutData.basic.description || "About me content"
+      title: aboutData.basic.title,
+      content: aboutData.basic.description
     };
   } else {
     about = {
@@ -60,6 +60,8 @@ const AboutMe = () => {
       content: "A passionate web developer and blogger."
     };
   }
+
+  console.log("about",about);
 
   // 适配项目数据
   let displayProjects = [];

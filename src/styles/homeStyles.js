@@ -198,6 +198,8 @@ export const aboutStyles = {
     marginLeft: '-50vw',
     marginRight: '-50vw',
     padding: '4rem 0 8rem 0',
+    height: '470px',
+    boxSizing: 'border-box',
   },
 
   newSection: {

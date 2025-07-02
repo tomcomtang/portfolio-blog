@@ -28,18 +28,9 @@ const API_BASE = getApiBase(WORDPRESS_URL);
 // 导入统一的兜底数据
 const {
   fallbackPosts,
-  fallbackHero,
-  fallbackContact,
-  fallbackSocials,
-  fallbackComments,
   fallbackPostsMeta,
-  fallbackAbout,
-  fallbackFooter,
-  fallbackSkills,
-  fallbackProjects,
   defaultAuthor,
-  defaultAuthorAvatar,
-  fallbackSiteConfig
+  defaultAuthorAvatar
 } = require('./src/data/fallbackData');
 
 // WordPress API 数据获取函数（兼容两种模式）
@@ -177,6 +168,92 @@ const decodeHtml = (html) => {
 exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => {
   const { createNode } = actions;
   
+  if (!process.env.GATSBY_WORDPRESS_URL || process.env.GATSBY_WORDPRESS_URL === 'https://your-wordpress-site.com') {
+    // 只要没配 WordPress，全部用 fallbackData
+    const {
+      fallbackPosts,
+      fallbackHero,
+      fallbackAbout,
+      fallbackContact,
+      fallbackSocials,
+      fallbackComments,
+      fallbackFooter,
+      fallbackSkills,
+      fallbackProjects
+    } = require('./src/data/fallbackData');
+    fallbackPosts.forEach(post => {
+      const nodeId = createNodeId(`wordpress-post-${post.id}`);
+      createNode({
+        id: nodeId,
+        internal: {
+          type: 'WordPressPost',
+          contentDigest: createContentDigest(post),
+        },
+        // 文章数据
+        wordpressId: post.id,
+        title: decodeHtml(post.title?.rendered || ''),
+        content: post.content?.rendered || '',
+        excerpt: post.excerpt?.rendered || '',
+        slug: post.slug,
+        date: post.date,
+        modified: post.modified,
+        author: defaultAuthor,
+        authorAvatar: post._embedded?.author?.[0]?.avatar_urls?.['96'] || defaultAuthorAvatar,
+        featuredImage: post.jetpack_featured_media_url || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+        categories: post._embedded?.['wp:term']?.[0]?.map(cat => cat.name) || [],
+        tags: post._embedded?.['wp:term']?.[1]?.map(tag => tag.name) || [],
+        // 计算阅读时间（基于内容长度）
+        readTime: Math.ceil((post.content?.rendered?.length || 0) / 1000) + ' min read',
+      });
+    });
+    // 注入所有分类数据
+    const fallbackCategories = [
+      { name: 'hero', slug: 'hero', description: '', parsedData: fallbackHero },
+      { name: 'about', slug: 'about', description: '', parsedData: fallbackAbout }, 
+      { name: 'contact', slug: 'contact', description: '', parsedData: fallbackContact },
+      { name: 'socials', slug: 'socials', description: '', parsedData: fallbackSocials },
+      { name: 'comments', slug: 'comments', description: '', parsedData: fallbackComments },
+      { name: 'footer', slug: 'footer', description: '', parsedData: fallbackFooter },
+      { name: 'skills', slug: 'skills', description: '', parsedData: fallbackSkills },
+      { name: 'projects', slug: 'projects', description: '', parsedData: fallbackProjects },
+    ];
+    fallbackCategories.forEach((cat, idx) => {
+      createNode({
+        id: createNodeId(`fallback-category-${cat.slug}`),
+        internal: {
+          type: 'WordPressCategory',
+          contentDigest: createContentDigest(cat),
+        },
+        wordpressId: idx + 1,
+        name: cat.name,
+        slug: cat.slug,
+        description: cat.description,
+        count: 1,
+        parsedData: cat.parsedData,
+      });
+    });
+    // 注入tags节点
+    if (Array.isArray(fallbackTags)) {
+      console.log('Injecting fallbackTags:', fallbackTags);
+      fallbackTags.forEach((tag, idx) => {
+        console.log('Creating tag node:', tag);
+        createNode({
+          id: createNodeId(`fallback-tag-${tag.slug || tag}`),
+          internal: {
+            type: 'WordPressTag',
+            contentDigest: createContentDigest(tag),
+          },
+          wordpressId: idx + 1,
+          name: tag.name || tag,
+          slug: tag.slug || (typeof tag === 'string' ? tag.toLowerCase().replace(/\s+/g, '-') : ''),
+          description: tag.description || '',
+          count: tag.count || 1,
+        });
+      });
+    }
+    return;
+  }
+  
   console.log('🔄 Fetching WordPress data...');
   
   // 获取 WordPress 数据
@@ -190,6 +267,8 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
   const { posts, categories, pages, siteName } = wpData;
   
   console.log(`✅ Fetched ${posts.length} posts, ${categories.length} categories, ${pages.length} pages`);
+
+  console.log("posts",JSON.stringify(posts));
   
   // 创建 WordPress 文章节点
   posts.forEach((post, index) => {

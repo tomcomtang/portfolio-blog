@@ -1,3 +1,12 @@
+---
+date: 2025-06-22
+read: 5
+cover: "/static/image/cloud-3331240_640.png"
+title: Market Analysis
+author: Someone
+tags: 405217
+---
+
 # Market Analysis: E-commerce Trends 2025
 
 ## Market Overview

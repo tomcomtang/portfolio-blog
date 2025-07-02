@@ -1,3 +1,12 @@
+---
+date: 2025-06-23
+read: 5
+cover: "/static/image/icons-6931458_640.png"
+title: Revolutionary Cybersecurity Breakthrough
+author: Someone
+tags: 4276
+---
+
 # Revolutionary Cybersecurity Breakthrough: AI-Powered Threat Detection System Unveiled
 
 ## Exclusive: New Technology Promises to Transform Digital Security

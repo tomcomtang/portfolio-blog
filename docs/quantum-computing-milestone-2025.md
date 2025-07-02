@@ -1,3 +1,12 @@
+---
+date: 2025-06-21
+read: 5
+cover: "/static/image/craft-1141796_640.png"
+title: Quantum Computing Milestone
+author: Someone
+tags: 4276
+---
+
 # Quantum Computing Milestone: 1000-Qubit Processor Achieved
 
 ## Breakthrough in Quantum Technology

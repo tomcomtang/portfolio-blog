@@ -1,17 +1,18 @@
 # Portfolio Blog - Gatsby + WordPress
 
-A modern portfolio blog built with Gatsby, featuring static site generation (SSG) with WordPress data integration. This project demonstrates how to build a fast, SEO-friendly blog that fetches content from WordPress at build time, not runtime.
+A modern portfolio blog built with Gatsby, featuring static site generation (SSG) with optional WordPress data integration. This project demonstrates how to build a fast, SEO-friendly blog that can work with or without WordPress.
 
 ## 🎯 Project Purpose
 
 This project serves as a **portfolio blog template** that combines the best of both worlds:
 
 - **Gatsby's performance**: Static site generation for blazing-fast loading
-- **WordPress's content management**: Easy content updates through WordPress admin
+- **WordPress's content management**: Optional content updates through WordPress admin
 - **SEO optimization**: Pre-rendered pages with proper meta tags
 - **Modern UI**: Responsive design with smooth animations
+- **Zero Configuration**: Works out of the box with local fallback data
 
-Perfect for developers, designers, and content creators who want a fast, maintainable blog with easy content management.
+Perfect for developers, designers, and content creators who want a fast, maintainable blog with optional content management.
 
 ## 🚀 Quick Deploy
 
@@ -29,10 +30,7 @@ cd portfolio-blog
 # Install dependencies
 npm install
 
-# Set up environment variables
-cp env.example .env
-
-# Build and deploy
+# Build and deploy (no environment variables required!)
 npm run build
 ```
 
@@ -41,21 +39,22 @@ npm run build
 ### Tech Stack
 
 - **Frontend**: Gatsby 4 (React-based static site generator)
-- **Content Management**: WordPress REST API
+- **Content Management**: WordPress REST API (optional)
 - **Styling**: CSS Modules with custom styles
-- **Comments**: Giscus (GitHub Discussions integration)
-- **Deployment**: EdgeOne, Netlify, or any static hosting
+- **Comments**: Giscus (GitHub Discussions integration, optional)
+- **Deployment**: EdgeOne, or any static hosting
 
 ### Data Flow
 
 ```
-WordPress API → Gatsby Build Time → Static HTML/CSS/JS → CDN
+WordPress API (Optional) → Gatsby Build Time → Static HTML/CSS/JS → CDN
 ```
 
-1. **Build Time Data Fetching**: Gatsby fetches all WordPress data during build
-2. **Static Generation**: Creates pre-rendered HTML pages
-3. **No Runtime API Calls**: All content is embedded in the static files
-4. **Fast Loading**: Pages load instantly from CDN
+1. **Build Time Data Fetching**: Gatsby fetches WordPress data during build (if configured)
+2. **Fallback Data**: Uses local static data if WordPress is not configured
+3. **Static Generation**: Creates pre-rendered HTML pages
+4. **No Runtime API Calls**: All content is embedded in the static files
+5. **Fast Loading**: Pages load instantly from CDN
 
 ### Project Structure
 
@@ -67,12 +66,12 @@ src/
 │   ├── header.js        # Navigation header
 │   └── layout.js        # Main layout wrapper
 ├── data/
-│   └── fallbackData.js  # Fallback data when WP is unavailable
+│   └── fallbackData.js  # Local fallback data (used when WP is not configured)
 ├── pages/               # Page components
 │   ├── index.js         # Homepage
 │   ├── posts.js         # Blog posts list
 │   ├── post/[slug].js   # Individual post pages
-│   ├── comments.js      # Comments page
+│   ├── comments.js      # Comments page (only shown if Giscus is configured)
 │   └── contact.js       # Contact page
 ├── services/
 │   └── wordpressApi.js  # WordPress API utilities
@@ -81,30 +80,46 @@ src/
 
 ## ⚙️ Environment Configuration
 
-### Required Environment Variables
+### All Environment Variables Are Optional!
 
-Create a `.env` file in the project root:
+This project is designed to work **out of the box** without any configuration. All environment variables are optional:
 
 ```bash
-# WordPress Configuration
+# WordPress Configuration (Optional)
+# If not set, the site will use local fallback data from src/data/fallbackData.js
 GATSBY_WORDPRESS_URL=https://your-wordpress-site.wordpress.com
 
 # Giscus Comments Configuration (Optional)
-# If all three Giscus variables are set, the Comments menu will be displayed
+# If any of these are missing, the Comments menu will NOT be displayed
 GATSBY_GISCUS_REPO=your-username/your-repo-name
 GATSBY_GISCUS_REPO_ID=your-repo-id
 GATSBY_GISCUS_CATEGORY_ID=your-category-id
 ```
 
-### WordPress URL Configuration
+### WordPress Configuration (Optional)
 
-- Set `GATSBY_WORDPRESS_URL` to your WordPress.com site URL
-- If not set, the site will use fallback data from `src/data/fallbackData.js`
-- Format: `https://your-site.wordpress.com`
+**If `GATSBY_WORDPRESS_URL` is NOT set:**
+
+- ✅ Site works perfectly with local fallback data
+- ✅ All pages and functionality are available
+- ✅ Content comes from `src/data/fallbackData.js`
+- ✅ No external dependencies
+
+**If `GATSBY_WORDPRESS_URL` is set:**
+
+- ✅ Site fetches content from your WordPress site at build time
+- ✅ Uses the same data structure as fallback data
+- ✅ Automatically generates `posts-list.js` with latest content
+- ✅ Falls back to local data if WordPress is unavailable
+
+#### WordPress URL Format
+
+- WordPress.com: `https://your-site.wordpress.com`
+- Self-hosted: `https://your-domain.com`
 
 #### Local Testing
 
-For local development and testing, you can also set the environment variable directly in your terminal:
+For local development and testing, you can set environment variables directly:
 
 ```bash
 # macOS/Linux
@@ -120,11 +135,14 @@ $env:GATSBY_WORDPRESS_URL="https://your-wordpress-site.wordpress.com"
 npm run develop
 ```
 
-This allows you to test with different WordPress configurations without modifying the `.env` file.
+### Giscus Comments Configuration (Optional)
 
-### Giscus Configuration
+**Comments functionality is completely optional:**
 
-**Optional**: Comments functionality is only enabled when all three Giscus environment variables are configured.
+- **If NO Giscus variables are set:** Comments menu is hidden, no comment functionality
+- **If ALL three Giscus variables are set:** Comments menu appears, full comment functionality
+
+#### Setup Giscus (Optional)
 
 1. Go to [Giscus](https://giscus.app/)
 2. Configure with your GitHub repository
@@ -132,14 +150,14 @@ This allows you to test with different WordPress configurations without modifyin
    - `GATSBY_GISCUS_REPO`: Your repository name (e.g., "username/repo")
    - `GATSBY_GISCUS_REPO_ID`: Your repository ID
    - `GATSBY_GISCUS_CATEGORY_ID`: Your category ID
-4. The Comments menu will automatically appear in the navigation when all variables are set
-5. Comments will appear on blog posts and the comments page automatically
+4. The Comments menu will automatically appear in the navigation
+5. Comments will appear on blog posts and the comments page
 
 **Testing**: Visit `/giscus-test` to verify your Giscus configuration is working correctly.
 
-## 📝 WordPress Data Structure
+## 📝 WordPress Data Structure (Optional)
 
-To configure your WordPress site for this template, you need to create categories with specific data structures in their descriptions **or use ACF (Advanced Custom Fields) for structured data**. Reference `src/data/fallbackData.js` for the exact format.
+If you choose to use WordPress, configure your site to match the data structure used in the fallback data. Reference `src/data/fallbackData.js` for the exact format.
 
 ### Supported Data Sources
 
@@ -202,25 +220,14 @@ When using ACF, configure your custom fields to match the fallback data structur
 }
 ```
 
-#### 2. Socials Category (slug: "socials")
+#### 2. About Category (slug: "about")
 
 ```json
 {
-  "socials": [
-    {
-      "name": "twitter",
-      "val": "https://twitter.com/your-handle",
-      "svg": "twitter.svg",
-      "type": "social"
-    },
-    {
-      "name": "email",
-      "val": "mailto:your@email.com",
-      "svg": "email.svg",
-      "address": "your@email.com",
-      "type": "contact"
-    }
-  ]
+  "title": "About Me",
+  "description": "Your detailed about section content",
+  "image": "https://your-image-url.com",
+  "skills": ["Skill 1", "Skill 2", "Skill 3"]
 }
 ```
 
@@ -228,86 +235,188 @@ When using ACF, configure your custom fields to match the fallback data structur
 
 ```json
 {
-  "title": "Contact Me",
-  "description": "Get in touch with me",
-  "email": "your@email.com",
-  "phone": "+1234567890",
-  "address": "Your Address",
-  "bottom_info": {
-    "response_time": "I typically respond within 24 hours",
-    "closing_message": "Looking forward to hearing from you!"
-  }
+  "title": "Get In Touch",
+  "description": "Contact form description",
+  "email": "your-email@example.com",
+  "phone": "+1 234 567 8900",
+  "address": "Your address here"
 }
 ```
 
-### How to Set Up WordPress Categories
+#### 4. Socials Category (slug: "socials")
 
-1. Go to WordPress Admin → Posts → Categories
-2. Create categories with the exact slugs mentioned above
-3. In the category description field, paste the JSON data
-4. Make sure the JSON is valid (no trailing commas, proper quotes)
-5. Save the category
-
-## 🚀 Development
-
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run develop
-
-# Build for production
-npm run build
-
-# Serve production build locally
-npm run serve
-
-# Clean cache
-npm run clean
+```json
+{
+  "socials": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/yourusername",
+      "icon": "github"
+    },
+    {
+      "name": "LinkedIn",
+      "url": "https://linkedin.com/in/yourusername",
+      "icon": "linkedin"
+    }
+  ]
+}
 ```
 
-## 🔧 Customization
+#### 5. Comments Category (slug: "comments")
+
+```json
+{
+  "title": "Comments Policy",
+  "description": "Your comments policy and guidelines",
+  "rules": [
+    "Be respectful and constructive",
+    "No spam or self-promotion",
+    "Stay on topic"
+  ]
+}
+```
+
+#### 6. Footer Category (slug: "footer")
+
+```json
+{
+  "text": "© 2025 Your Name. All rights reserved.",
+  "links": [
+    {
+      "text": "Privacy Policy",
+      "url": "/privacy"
+    }
+  ]
+}
+```
+
+#### 7. Skills Category (slug: "skills")
+
+```json
+[
+  {
+    "name": "Frontend Development",
+    "level": 90,
+    "color": "#61dafb"
+  },
+  {
+    "name": "Backend Development",
+    "level": 85,
+    "color": "#f7df1e"
+  }
+]
+```
+
+#### 8. Projects Category (slug: "projects")
+
+```json
+[
+  {
+    "title": "Project Name",
+    "description": "Project description",
+    "image": "https://project-image-url.com",
+    "url": "https://project-url.com",
+    "technologies": ["React", "Node.js", "MongoDB"]
+  }
+]
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 16+
+- npm or yarn
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/tomcomtang/portfolio-blog.git
+   cd portfolio-blog
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Start development server**
+
+   ```bash
+   npm run develop
+   ```
+
+   The site will work immediately with local fallback data!
+
+4. **Optional: Configure WordPress**
+
+   - Create a `.env` file
+   - Add your `GATSBY_WORDPRESS_URL`
+   - Restart the development server
+
+5. **Optional: Configure Comments**
+   - Add Giscus environment variables to `.env`
+   - Comments menu will appear automatically
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+The built site will be in the `public/` directory, ready for deployment.
+
+## 🎨 Customization
 
 ### Styling
 
-- All styles are in `src/styles/` directory
-- Use CSS Modules for component-specific styles
-- Global styles in `src/components/layout.css`
+- Modify `src/styles/` for global styles
+- Update component-specific CSS modules
+- Customize colors and fonts in CSS variables
 
 ### Content
 
-- Edit `src/data/fallbackData.js` for local content
-- Configure WordPress categories for dynamic content
-- Update `gatsby-config.js` for site metadata
+- **With WordPress**: Update content through WordPress admin
+- **Without WordPress**: Edit `src/data/fallbackData.js`
 
-## 📚 Documentation
+### Layout
 
-- [WordPress Setup Guide](docs/wordpress-setup-guide.md)
-- [Data Structure Reference](docs/wordpress-data-structure.md)
-- [Deployment Guide](docs/deployment-guide.md)
+- Modify components in `src/components/`
+- Update page templates in `src/pages/`
+- Customize navigation in `src/components/header.js`
+
+## 📦 Deployment
+
+### EdgeOne (Recommended)
+
+Use the "Deploy to EdgeOne" button above for one-click deployment.
+
+### Manual Deployment
+
+Upload the contents of the `public/` directory to any static hosting service.
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🙏 Acknowledgments
 
-If you encounter issues:
-
-1. Check the [WordPress Setup Guide](docs/wordpress-setup-guide.md)
-2. Verify your environment variables are set correctly
-3. Ensure your WordPress categories have valid JSON in descriptions
-4. Open an issue with detailed error information
+- Gatsby team for the amazing static site generator
+- WordPress for content management
+- Giscus for GitHub Discussions integration
+- All contributors and users of this template
 
 ---
 
-**Note**: This project uses static site generation for optimal performance. Content updates require a rebuild and redeploy.
+**Remember**: This template works perfectly without any configuration! All environment variables are optional. Start with `npm install && npm run develop` and you'll have a fully functional portfolio blog.
