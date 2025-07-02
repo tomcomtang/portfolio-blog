@@ -232,25 +232,6 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
         parsedData: cat.parsedData,
       });
     });
-    // 注入tags节点
-    if (Array.isArray(fallbackTags)) {
-      console.log('Injecting fallbackTags:', fallbackTags);
-      fallbackTags.forEach((tag, idx) => {
-        console.log('Creating tag node:', tag);
-        createNode({
-          id: createNodeId(`fallback-tag-${tag.slug || tag}`),
-          internal: {
-            type: 'WordPressTag',
-            contentDigest: createContentDigest(tag),
-          },
-          wordpressId: idx + 1,
-          name: tag.name || tag,
-          slug: tag.slug || (typeof tag === 'string' ? tag.toLowerCase().replace(/\s+/g, '-') : ''),
-          description: tag.description || '',
-          count: tag.count || 1,
-        });
-      });
-    }
     return;
   }
   
